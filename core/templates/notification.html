@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2> Navy Notifications </h2>
+
+<ul>
+    {% for notification in notifications %}
+        <li>
+            <strong>{{ notification.title }}</strong> - {{ notification.created_at|date:"d M Y" }} <br>
+            {{ notification.description }}
+        </li>
+    {% empty %}
+        <p>No notifications available.</p>
+    {% endfor %}
+</ul>
+
+{% endblock %}

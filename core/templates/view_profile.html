@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+{% block title %}View Profile{% endblock %}
+
+{% block content %}
+<style>
+  /* Main Container */
+  .profile-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+
+  /* Profile Card Styles */
+  .profile-card {
+    background: white;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .profile-header {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .profile-header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  /* Profile Photo Styles */
+  .profile-photo-container {
+    width: 200px;
+    height: 200px;
+    margin: -100px auto 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .profile-photo {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 6px solid white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+    background-color: #f3f4f6;
+  }
+
+  /* Profile Content Styles */
+  .profile-content {
+    padding: 2rem;
+    background: white;
+  }
+
+  .profile-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .profile-field {
+    margin-bottom: 1.5rem;
+  }
+
+  .field-label {
+    font-weight: 600;
+    color: #4b5563;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+  }
+
+  .field-value {
+    color: #1f2937;
+    font-size: 1rem;
+    line-height: 1.6;
+    background: #f8fafc;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    display: block;
+  }
+
+  /* Button Styles */
+  .action-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #2563eb;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .action-button:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+  }
+
+  /* Experiences Section */
+  .experiences-section {
+    margin-top: 3rem;
+    max-width: 1200px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .section-header h2 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+  }
+
+  .experiences-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .experience-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+
+  .experience-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  .experience-header {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .experience-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+  }
+
+  .experience-content {
+    padding: 1.5rem;
+    color: #4b5563;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .experience-footer {
+    padding: 1rem 1.5rem;
+    background: #f8fafc;
+    border-top: 1px solid #e5e7eb;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .profile-container {
+      padding: 1rem;
+    }
+
+    .profile-header {
+      padding: 2rem 1rem;
+    }
+
+    .profile-photo-container {
+      width: 150px;
+      height: 150px;
+      margin: -75px auto 1rem;
+    }
+  }
+</style>
+
+<div class="profile-container">
+  <div class="profile-card">
+    <div class="profile-header">
+      <h1>{{ profile.user.username }}</h1>
+    </div>
+
+    <div class="profile-photo-container">
+      {% if profile.profile_photo %}
+        <img src="{{ profile.profile_photo.url }}" alt="Profile Photo" class="profile-photo">
+      {% else %}
+        <div class="profile-photo"></div>
+      {% endif %}
+    </div>
+
+    <div class="profile-content">
+      <div class="profile-section">
+        <div class="profile-field">
+          <span class="field-label">Rank</span>
+          <span class="field-value">{{ profile.rank }}</span>
+        </div>
+
+        <div class="profile-field">
+          <span class="field-label">Years of Service</span>
+          <span class="field-value">{{ profile.years_of_service }}</span>
+        </div>
+      </div>
+
+      <div class="profile-field">
+        <span class="field-label">Achievements</span>
+        <span class="field-value">{{ profile.achievements }}</span>
+      </div>
+
+      <div class="profile-field">
+        <span class="field-label">Bio</span>
+        <span class="field-value">{{ profile.bio }}</span>
+      </div>
+
+      {% if user.role == 'veteran' %}
+      <a href="{% url 'edit_profile' %}" class="action-button">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+        </svg>
+        Edit Profile
+      </a>
+      {% else %}
+      <a href="{% url 'view_course' %}" class="action-button">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        View Course
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="experiences-section">
+    <div class="section-header">
+      <h2>Shared Experiences</h2>
+    </div>
+
+    <div class="experiences-grid">
+      {% for experience in experiences %}
+      <div class="experience-card">
+        <div class="experience-header">
+          <h3 class="experience-title">{{ experience.title }}</h3>
+        </div>
+        <div class="experience-content">
+          {{ experience.content }}
+        </div>
+        <div class="experience-footer">
+          {{ experience.created_at|date:"F j, Y" }}
+        </div>
+      </div>
+      {% empty %}
+      <div class="experience-card">
+        <div class="experience-content">
+          <p class="text-gray-500 text-center">No experiences shared yet.</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #f4f4f4; /* Light background for contrast */
+            font-family: Arial, sans-serif; /* Consistent font */
+        }
+
+        .form-container {
+            max-width: 400px;
+            margin: 50px auto; /* Center the form */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-container p {
+            margin: 10px 0;
+            color: #555;
+        }
+
+        .form-container button {
+            width: 48%; /* Adjusted width for side-by-side buttons */
+            padding: 10px;
+            margin: 10px 1%; /* Margin for spacing between buttons */
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s; /* Smooth transition */
+        }
+
+        .form-container button:hover {
+            background-color: #45a049;
+        }
+
+        .form-container input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s; /* Smooth transition */
+        }
+
+        .form-container input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .form-container {
+                width: 90%; /* Full width on small screens */
+            }
+
+            .form-container button {
+                width: 100%; /* Full width buttons on small screens */
+                margin: 10px 0; /* Margin adjustment */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Add Questions</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div style="display: flex; justify-content: space-between;">
+                <button type="submit">Add Another Question</button>
+                <button type="submit" name="finish">Finish</button>
+            </div>
+        </form>
+    </div>
+</body>
+{% endblock %}

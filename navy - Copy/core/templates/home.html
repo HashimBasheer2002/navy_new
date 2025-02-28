@@ -1,0 +1,735 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+
+<style>
+  :root {
+    --background-color: #1c1c1c;
+    --accent-color: #0073e6;
+    --hover-accent: #005bb5;
+    --text-color: #ffffff;
+    --overlay-gradient: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
+    --transition-speed: 0.3s;
+  }
+
+  /* Hero Section */
+  .hero {
+
+    width: 1500px;;
+    min-height: 100vh;
+    position: relative;
+    right:170px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    transition: transform var(--transition-speed);
+  }
+
+  .hero:before {
+    content: "";
+    background: var(--overlay-gradient);
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  /* Content Container */
+  .hero .container {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Typography */
+  .hero h2 {
+    color: var(--text-color);
+    margin: 0 0 1.5rem;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    letter-spacing: 2px;
+    line-height: 1.2;
+  }
+
+  .hero p {
+    color: var(--text-color);
+    margin: 0 0 2rem;
+    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  /* Buttons */
+  .button-group {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    background:#DAA520 ;
+    color:black;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    transition: all var(--transition-speed);
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn:hover {
+    background: #F0E68C;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.2);
+  }
+
+  .btn-watch-video {
+    background: transparent;
+    color: var(--text-color);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 2px solid var(--text-color);
+  }
+
+  .btn-watch-video i {
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    transition: var(--transition-speed);
+  }
+
+  .btn-watch-video:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-color);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .hero {
+      padding: 4rem 1rem;
+    }
+
+    .button-group {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .btn {
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+    .spann {
+    color:#DAA520;
+    margin: 0 0 1.5rem;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    letter-spacing: 2px;
+    line-height: 1.2;
+  }
+   .about-container {
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 2rem;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    .about-content {
+      display: flex;
+      align-items: center;
+      gap: 4rem;
+      background: linear-gradient(145deg, #ffffff, #f5f5f5);
+      border-radius: 20px;
+      padding: 3rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .about-image {
+      flex: 1;
+      position: relative;
+    }
+
+    .about-image img {
+      width: 100%;
+      height: auto;
+      border-radius: 15px;
+      transition: transform 0.3s ease;
+    }
+
+    .about-image::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 15px;
+      left: 15px;
+      background: #2563eb;
+      border-radius: 15px;
+      z-index: -1;
+    }
+
+    .about-text {
+      flex: 1;
+    }
+
+    .about-title {
+      font-size: 2.5rem;
+      color: #1e293b;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .about-title::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -10px;
+      width: 60px;
+      height: 4px;
+      background: #DAA520;
+      border-radius: 2px;
+    }
+
+    .about-description {
+      color: #64748b;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color:#DAA520;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .about-content {
+        flex-direction: column;
+        padding: 2rem;
+      }
+
+      .about-image::after {
+        display: none;
+      }
+    }
+   <style>
+.services-container {
+  max-width: 1400px; /* Increased to accommodate cards in one line */
+  margin: 4rem auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.services-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.services-title {
+  font-size: 2.5rem;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.services-title:after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: #DAA520;
+  border-radius: 2px;
+}
+
+.services-subtitle {
+  color: #64748b;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Force 4 columns */
+  gap: 1.5rem;
+  padding: 0 1rem;
+}
+
+.service-card {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #DAA520, #F0E68C);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.service-card:hover::before {
+  transform: scaleX(1);
+}
+
+.service-icon {
+  width: 50px;
+  height: 50px;
+  background: #FFDF00;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.service-icon svg {
+  width: 24px;
+  height: 24px;
+  stroke: #1e293b;
+  transition: all 0.3s ease;
+}
+
+.service-card:hover .service-icon {
+  background: #F0E68C;
+  transform: rotate(5deg);
+}
+
+.service-card:hover .service-icon svg {
+  stroke: #1e293b;
+  transform: scale(1.1);
+}
+
+.service-title {
+  font-size: 1.25rem;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.service-description {
+  color: #64748b;
+  line-height: 1.5;
+  font-size: 0.95rem;
+  text-align: center;
+  margin-bottom: 0;
+}
+
+@media (max-width: 1200px) {
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .services-container {
+    padding: 1rem;
+  }
+
+  .service-card {
+    padding: 1.25rem;
+  }
+}
+  .card {
+position:relative;
+left:300px;
+  width: 100%;
+  max-width: 500px;
+  min-width: 200px;
+  height: 250px;
+  background-color: #292929;
+  margin: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.24);
+  border: 2px solid rgba(7, 7, 7, 0.12);
+  font-size: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+}
+
+.icon {
+  margin: 0 auto;
+  width: 100%;
+  height: 80px;
+  max-width: 80px;
+  background: linear-gradient(90deg, #7eaaff 0%, #ff48fb 40%, rgba(0, 0, 0, 0.28) 60%);
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.8s ease;
+  background-position: 0px;
+  background-size: 200px;
+}
+
+.icon svg {
+  fill: white;
+}
+
+.card .title {
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  margin-top: 30px;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+
+.card .text {
+  width: 80%;
+  margin: 0 auto;
+  font-size: 13px;
+  text-align: center;
+  margin-top: 20px;
+  color: white;
+  font-weight: 200;
+  letter-spacing: 2px;
+  opacity: 0;
+  max-height: 0;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  height: 270px;
+}
+
+.card:hover .text {
+  transition: all 0.3s ease;
+  opacity: 1;
+  max-height: 40px;
+}
+
+.card:hover .icon {
+  background-position: -120px;
+  transition: all 0.3s ease;
+}
+
+.card:hover .icon svg path {
+  fill: url('#gradientColor');
+  transition: all 0.3s ease;
+}
+  /* From Uiverse.io by Bodyhc */
+.ag-courses_item {
+  margin: auto;
+  overflow: hidden;
+  border-radius: 28px;
+}
+.ag-courses-item_link {
+  display: block;
+  padding: 30px 20px;
+  background-color: #121212;
+  overflow: hidden;
+  position: relative;
+  text-decoration: none;
+}
+
+.ag-courses-item_link:hover,
+.ag-courses-item_link:hover .ag-courses-item_date {
+  color: #121212;
+}
+.ag-courses-item_link:hover .ag-courses-item_bg {
+  -webkit-transform: scale(10);
+  -ms-transform: scale(10);
+  transform: scale(10);
+}
+.ag-courses-item_title {
+  min-height: 57px;
+  margin: 0 0 30px;
+  overflow: hidden;
+  font-weight: bold;
+  font-size: 20px;
+  color: rgb(255, 255, 255);
+  z-index: 2;
+  position: relative;
+}
+.ag-courses-item_date-box {
+  font-size: 18px;
+  color: #fff;
+  z-index: 2;
+  position: relative;
+}
+.ag-courses-item_date {
+  font-weight: bold;
+  color: #f9e534;
+  -webkit-transition: color 0.5s ease;
+  -o-transition: color 0.5s ease;
+  transition: color 0.5s ease;
+}
+.ag-courses-item_bg {
+  height: 130px;
+  width: 100px;
+  background-color: #f9b234;
+  z-index: 1;
+  position: absolute;
+  top: -75px;
+  right: -75px;
+  border-radius: 50%;
+  -webkit-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+
+</style>
+
+{% load static %}
+<body>
+  {% if role == 'admin' %}
+    <a href="{% url 'admin:index' %}">Admin Dashboard</a>
+  {% elif role == 'veteran' %}
+    <p>Thank you for being a Veteran! Share your experiences with Aspirants.</p>
+  {% elif role == 'aspirant' %}
+    <p>Welcome, Aspirant! Learn and grow here.</p>
+  {% endif %}
+{% if user.role == 'veteran'%}
+  <section id="hero" class="hero">
+    <img src="{% static 'images/nav.jpg' %}" alt="Hero Background" data-aos="fade-in">
+    <div class="container">
+        <h2 data-aos="fade-up" data-aos-delay="100">Share.<span class="spann"> Connect.</span> Grow.</h2>
+      <p data-aos="fade-up" data-aos-delay="200">
+        Stay informed, stay connected, and lead the way for the next generation
+      </p>
+      <div class="button-group" data-aos="fade-up" data-aos-delay="300">
+        <a href="{%url 'member'%}" class="btn">MEMBERSHIP</a>
+        <a href="https://youtu.be/6VweFLh_GN0" class="btn btn-watch-video" target="_blank">
+          <i class="bi bi-play-circle"></i>
+          <span>Watch Video</span>
+        </a>
+      </div>
+    </div>
+  </section>
+{% elif user.role == 'aspirant'%}
+    <section id="hero" class="hero">
+    <img src="{% static 'images/aspirants.jpg' %}" alt="Hero Background" data-aos="fade-in">
+    <div class="container">
+        <h2 data-aos="fade-up" data-aos-delay="100">Connect. Share. <span class="spann">Grow.</span></h2>
+      <p data-aos="fade-up" data-aos-delay="200">
+        Stay informed, stay connected, and lead the way for the next generation
+      </p>
+      <div class="button-group" data-aos="fade-up" data-aos-delay="300">
+      <a href="{%url 'view_course'%}" class="btn">PURCHASE COURSE</a>
+        <a href="https://youtu.be/6VweFLh_GN0" class="btn btn-watch-video" target="_blank">
+          <i class="bi bi-play-circle"></i>
+          <span>Watch Video</span>
+        </a>
+      </div>
+    </div>
+  </section>
+{% else %}
+   <section id="hero" class="hero">
+    <img src="{% static 'images/aspirants.jpg' %}" alt="Hero Background" data-aos="fade-in">
+    <div class="container">
+        <h2 data-aos="fade-up" data-aos-delay="100">Connect. Share. <span class="spann">Grow.</span></h2>
+      <p data-aos="fade-up" data-aos-delay="200">
+        Stay informed, stay connected, and lead the way for the next generation
+      </p>
+      <div class="button-group" data-aos="fade-up" data-aos-delay="300">
+      <a href="{%url 'view_course'%}" class="btn">VETERANS</a>
+        <a href="https://youtu.be/6VweFLh_GN0" class="btn btn-watch-video" target="_blank">
+          <i class="bi bi-play-circle"></i>
+          <span>Watch Video</span>
+        </a>
+      </div>
+    </div>
+  </section>
+ {% endif %}
+  <br><br><br>
+
+  <div class="ag-courses_item">
+  <a class="ag-courses-item_link" href="{% url 'wall_of_honor'%}">
+    <div class="ag-courses-item_bg"></div>
+    <div class="ag-courses-item_title">Wall OF Honor</div>
+    <div class="ag-courses-item_date-box">
+
+      <span class="ag-courses-item_date">Celebrating Excellence and Achievement of our Heros </span>
+    </div>
+  </a>
+</div>
+<section class="about-container">
+    <div class="about-content">
+      <div class="about-image">
+        <img src="{% static 'images/360_F_449828351_5d6fPaBVaJn0rTmMevQf1bMlYE0fFWEz.jpg'%}" alt="Team working together">
+      </div>
+      <div class="about-text">
+        <h2 class="about-title">About Us</h2>
+        <p class="about-description">
+          We're a passionate team of creators, innovators, and problem-solvers dedicated to transforming ideas into reality. With over a decade of experience, we've helped countless businesses achieve their digital goals through cutting-edge solutions and strategic thinking.
+        </p>
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">Veterans</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">1000+</div>
+            <div class="stat-label">Aspirants</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Service</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+    {% if user.role == 'veteran' %}
+  <a href="{% url 'create_course'%}">
+      <div class="card">
+        <div class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+            <linearGradient id="gradientColor">
+              <stop offset="5%" stop-color="#7eaaff"></stop>
+              <stop offset="95%" stop-color="#ff48fb"></stop>
+            </linearGradient>
+            <g>
+              <path d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9l0 28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5l0-24.6c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/>
+            </g>
+          </svg>
+        </div>
+        <p class="title">Set Up Your Course</p>
+        <p class="text">Add the Course which you plan to provide</p>
+      </div>
+  </a>
+  {% endif %}
+<section class="services-container">
+  <div class="services-header">
+    <h2 class="services-title">Our Services</h2>
+    <p class="services-subtitle">Discover our comprehensive range of solutions designed to help your business grow and succeed in the digital age.</p>
+  </div>
+
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 19l7-7-7-7M5 19l7-7-7-7"/>
+        </svg>
+      </div>
+      <h3 class="service-title">Make Veterans Connected</h3>
+      <p class="service-description">Create stunning, responsive websites that engage your audience and drive results.</p>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+          <line x1="9" y1="9" x2="9.01" y2="9"/>
+          <line x1="15" y1="9" x2="15.01" y2="9"/>
+        </svg>
+      </div>
+      <h3 class="service-title">Sharing Resources</h3>
+      <p class="service-description">Transform user experiences with intuitive, beautiful interfaces.</p>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+      </div>
+      <h3 class="service-title">Navy Updates</h3>
+      <p class="service-description">Stay informed with the latest updates and communications.</p>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+          <line x1="12" y1="22.08" x2="12" y2="12"/>
+        </svg>
+      </div>
+      <h3 class="service-title">Provide Classes</h3>
+      <p class="service-description">Share knowledge and inspire the next generation of aspirants.</p>
+    </div>
+  </div>
+</section>
+
+
+
+</body>
+{% endblock %}

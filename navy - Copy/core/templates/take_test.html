@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .quiz-wrapper {
+        min-height: calc(100vh - 160px); /* Adjust based on your navbar and footer height */
+        padding: 20px;
+        background-color: #f4f4f4;
+    }
+
+    .test-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        width: 100%;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .test-container h2 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .question-box {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        text-align: left;
+        border-left: 5px solid #4CAF50;
+    }
+
+    .question-box p {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .options label {
+        display: block;
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin: 5px 0;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .options input[type="radio"] {
+        display: none;
+    }
+
+    .options label:hover {
+        background-color: #f0f0f0;
+    }
+
+    .options input[type="radio"]:checked + label {
+        background-color: #4CAF50;
+        color: white;
+        border-color: #4CAF50;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #4CAF50;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 15px;
+    }
+
+    .submit-btn:hover {
+        background-color: #45a049;
+    }
+</style>
+
+<div class="quiz-wrapper">
+    <div class="test-container">
+        <h2>{{ mock_test.title }}</h2>
+        <form method="post">
+            {% csrf_token %}
+
+            {% for question in questions %}
+            <div class="question-box">
+                <p>{{ forloop.counter }}. {{ question.text }}</p>
+                <div class="options">
+                    <input type="radio" id="q{{ question.id }}_1" name="question_{{ question.id }}" value="1">
+                    <label for="q{{ question.id }}_1">{{ question.option1 }}</label>
+
+                    <input type="radio" id="q{{ question.id }}_2" name="question_{{ question.id }}" value="2">
+                    <label for="q{{ question.id }}_2">{{ question.option2 }}</label>
+
+                    <input type="radio" id="q{{ question.id }}_3" name="question_{{ question.id }}" value="3">
+                    <label for="q{{ question.id }}_3">{{ question.option3 }}</label>
+
+                    <input type="radio" id="q{{ question.id }}_4" name="question_{{ question.id }}" value="4">
+                    <label for="q{{ question.id }}_4">{{ question.option4 }}</label>
+                </div>
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="submit-btn">Submit Test</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

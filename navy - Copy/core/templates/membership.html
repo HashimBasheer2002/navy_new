@@ -1,0 +1,181 @@
+
+{% extends 'base.html'%}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veterans Membership Registration</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-blue-50">
+
+
+    <div class="container mx-auto px-4 py-12">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Join Our Elite Community</h2>
+                <p class="text-xl text-gray-600">Connect, Grow, and Thrive with Fellow Veterans</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-8">
+                    <h3 class="text-2xl font-bold mb-6">Premium Membership Benefits</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">Exclusive Resources</h4>
+                                <p class="text-blue-100">Access premium support resources and career opportunities</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">Community Network</h4>
+                                <p class="text-blue-100">Connect with veterans and military professionals</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">Business Discounts</h4>
+                                <p class="text-blue-100">Special rates with our business partners nationwide</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">Priority Events</h4>
+                                <p class="text-blue-100">First access to workshops and veteran gatherings</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                        <div class="space-y-6">
+                            <h3 class="text-2xl font-bold text-gray-800">Personal Information</h3>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2" for="firstName">First Name</label>
+                                <input type="text" id="firstName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2" for="lastName">Last Name</label>
+                                <input type="text" id="lastName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2" for="email">Email Address</label>
+                                <input type="email" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" required>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <h3 class="text-2xl font-bold text-gray-800">Service Details</h3>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2" for="serviceNumber">Service Number</label>
+                                <input type="text" id="serviceNumber" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2" for="branch">Branch of Service</label>
+                                <select id="branch" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" required>
+                                    <option value="">Select Branch</option>
+                                    <option value="army">Army</option>
+                                    <option value="navy">Navy</option>
+                                    <option value="airforce">Air Force</option>
+                                    <option value="marines">Marine Corps</option>
+                                    <option value="coastguard">Coast Guard</option>
+                                    <option value="spacefore">Space Force</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-12">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">Select Your Membership</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="border-2 border-gray-200 rounded-xl p-6 hover:border-blue-500 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                                <div class="text-center">
+                                    <h4 class="text-xl font-bold text-gray-800 mb-2">Monthly</h4>
+                                    <p class="text-4xl font-bold text-blue-600 mb-4">199rs<span class="text-gray-500 text-lg">/mo</span></p>
+                                    <input type="radio" name="membership" value="monthly" class="hidden" id="monthly">
+                                    <label for="monthly" class="block w-full py-2 px-4 bg-blue-600 text-white rounded-lg opacity-90 group-hover:opacity-100 transition-opacity">Select Plan</label>
+                                </div>
+                            </div>
+                            <div class="border-2 border-blue-500 rounded-xl p-6 shadow-lg relative group">
+                                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                                    <span class="bg-blue-500 text-white px-4 py-1 rounded-full text-sm">Most Popular</span>
+                                </div>
+                                <div class="text-center">
+                                    <h4 class="text-xl font-bold text-gray-800 mb-2">Annual</h4>
+                                    <p class="text-4xl font-bold text-blue-600 mb-4">1000rs<span class="text-gray-500 text-lg">/yr</span></p>
+                                    <p class="text-green-600 text-sm mb-4">Save 17%</p>
+                                    <input type="radio" name="membership" value="annual" class="hidden" id="annual" checked>
+                                    <label for="annual" class="block w-full py-2 px-4 bg-blue-600 text-white rounded-lg">Select Plan</label>
+                                </div>
+                            </div>
+                            <div class="border-2 border-gray-200 rounded-xl p-6 hover:border-blue-500 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                                <div class="text-center">
+                                    <h4 class="text-xl font-bold text-gray-800 mb-2">Lifetime</h4>
+                                    <p class="text-4xl font-bold text-blue-600 mb-4">5000rs</p>
+                                    <p class="text-green-600 text-sm mb-4">Best Value</p>
+                                    <input type="radio" name="membership" value="lifetime" class="hidden" id="lifetime">
+                                    <label for="lifetime" class="block w-full py-2 px-4 bg-blue-600 text-white rounded-lg opacity-90 group-hover:opacity-100 transition-opacity">Select Plan</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">Payment Information</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2" for="cardNumber">Card Number</label>
+                                <input type="text" id="cardNumber" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="**** **** **** ****" required>
+                            </div>
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-gray-700 font-medium mb-2" for="expiry">Expiry Date</label>
+                                    <input type="text" id="expiry" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="MM/YY" required>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 font-medium mb-2" for="cvv">CVV</label>
+                                    <input type="text" id="cvv" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="***" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-8 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-bold text-lg shadow-lg hover:shadow-xl">
+                        Complete Registration
+                    </button>
+                </form>
+            </div>
+
+            <div class="mt-8 text-center">
+                 <p class="text-gray-600">
+        Need assistance? Our veteran support team is here to help 24/7
+        <br>
+        Contact us at <a href="mailto:support@veteranselite.org" class="text-blue-600 hover:text-blue-800">support@veteranselite.org</a>
+            </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

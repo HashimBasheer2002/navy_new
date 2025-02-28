@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .form-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .header-section {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .page-title {
+    color: #1a1a1a;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .header-underline {
+    width: 60px;
+    height: 4px;
+    background: #3b82f6;
+    margin: 1rem auto;
+    border-radius: 2px;
+  }
+
+  .form-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 2rem;
+  }
+
+  .form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-label {
+    color: #374151;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+
+  .required {
+    color: #dc2626;
+    margin-left: 0.25rem;
+  }
+
+  .news-form input[type="text"],
+  .news-form input[type="email"],
+  .news-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .news-form input[type="text"]:focus,
+  .news-form input[type="email"]:focus,
+  .news-form textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  }
+
+  .help-text {
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .error-message {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: flex-end;
+  }
+
+  .submit-button, .cancel-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .submit-button {
+    background: #3b82f6;
+    color: white;
+    border: none;
+  }
+
+  .submit-button:hover {
+    background: #2563eb;
+  }
+
+  .cancel-button {
+    background: white;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+  }
+
+  .cancel-button:hover {
+    background: #f3f4f6;
+  }
+
+  .button-icon {
+    color: currentColor;
+  }
+
+  @media (max-width: 640px) {
+    .form-container {
+      margin: 1rem auto;
+    }
+
+    .page-title {
+      font-size: 2rem;
+    }
+
+    .form-card {
+      padding: 1.5rem;
+      border-radius: 8px;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+
+    .submit-button, .cancel-button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+<body>
+<div class="form-container">
+  <div class="header-section">
+    <h2 class="page-title">Create New Update</h2>
+    <div class="header-underline"></div>
+  </div>
+
+  <div class="form-card">
+    <form method="post" class="news-form">
+      {% csrf_token %}
+      <div class="form-fields">
+        {% for field in form %}
+        <div class="form-group">
+          <label class="form-label" for="{{ field.id_for_label }}">
+            {{ field.label }}
+            {% if field.field.required %}
+            <span class="required">*</span>
+            {% endif %}
+          </label>
+          {{ field }}
+          {% if field.help_text %}
+          <small class="help-text">{{ field.help_text }}</small>
+          {% endif %}
+          {% if field.errors %}
+          <div class="error-message">
+            {% for error in field.errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="submit-button">
+          <svg class="button-icon" viewBox="0 0 24 24" width="18" height="18">
+            <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+          </svg>
+          Publish Update
+        </button>
+        <button type="button" class="cancel-button" onclick="history.back()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+{% endblock %}

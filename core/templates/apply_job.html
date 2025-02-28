@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .application-wrapper {
+        min-height: calc(100vh - 160px);
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .application-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .application-title {
+        color: #2d3748;
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    form p {
+        margin: 0;
+    }
+
+    form label {
+        display: block;
+        font-weight: 500;
+        color: #4a5568;
+        margin-bottom: 8px;
+    }
+
+    form input,
+    form textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    form input:focus,
+    form textarea:focus {
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+        outline: none;
+    }
+
+    form input[type="file"] {
+        background-color: #f7fafc;
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    .submit-button {
+        background: linear-gradient(to right, #3182ce, #2c5282);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+
+    .submit-button:hover {
+        background: linear-gradient(to right, #2c5282, #1a365d);
+        transform: translateY(-1px);
+    }
+
+    .submit-button:active {
+        transform: translateY(0);
+    }
+
+    /* Help text styling */
+    .helptext {
+        display: block;
+        font-size: 0.875rem;
+        color: #718096;
+        margin-top: 4px;
+    }
+
+    /* Error messages */
+    .errorlist {
+        color: #e53e3e;
+        font-size: 0.875rem;
+        margin-top: 4px;
+        list-style: none;
+        padding: 0;
+    }
+
+    @media (max-width: 640px) {
+        .application-wrapper {
+            padding: 20px 15px;
+        }
+
+        .application-container {
+            padding: 20px;
+        }
+
+        .application-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<div class="application-wrapper">
+    <div class="application-container">
+        <h2 class="application-title">Apply for {{ job.title }}</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="submit-button">Submit Application</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

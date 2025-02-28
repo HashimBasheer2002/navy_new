@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  .notifications-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .header-section {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .page-title {
+    color: #1a1a1a;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .header-underline {
+    width: 60px;
+    height: 4px;
+    background: #3b82f6;
+    margin: 1rem auto;
+    border-radius: 2px;
+  }
+
+  .notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .notification-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .notification-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .notification-content {
+    padding: 1.5rem;
+  }
+
+  .notification-title {
+    color: #1a1a1a;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .notification-text {
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0 0 1.5rem 0;
+  }
+
+  .notification-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  .author, .date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .icon {
+    color: #6b7280;
+  }
+
+  @media (max-width: 640px) {
+    .notifications-container {
+      margin: 1rem auto;
+    }
+
+    .page-title {
+      font-size: 2rem;
+    }
+
+    .notification-card {
+      border-radius: 8px;
+    }
+
+    .notification-content {
+      padding: 1rem;
+    }
+
+    .notification-meta {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+</style>
+<body>
+<div class="notifications-container">
+  <div class="header-section">
+    <h2 class="page-title">Latest Updates</h2>
+    <div class="header-underline"></div>
+  </div>
+
+  <div class="notifications-list">
+    {% for news in news %}
+    <div class="notification-card">
+      <div class="notification-content">
+        <h3 class="notification-title">{{ news.title }}</h3>
+        <p class="notification-text">{{ news.content }}</p>
+        <div class="notification-meta">
+          <div class="author">
+            <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+              <path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+            <span>{{ news.created_by.username }}</span>
+          </div>
+          <div class="date">
+            <svg class="icon" viewBox="0 0 24 24" width="16" height="16">
+              <path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+            </svg>
+            <span>{{ news.date_posted }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+</body>
+{% endblock%}

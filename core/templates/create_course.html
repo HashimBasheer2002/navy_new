@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Course - NavyConnect{% endblock %}
+
+{% block content %}
+<style>
+    .form-container {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    h2 {
+        color: #2d3748;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        text-align: center;
+        position: relative;
+    }
+
+    h2::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 4px;
+        background: #0073e6;
+        margin: 8px auto 0;
+        border-radius: 2px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    label {
+        color: #4a5568;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    input, textarea {
+        padding: 0.8rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    input:focus, textarea:focus {
+        outline: none;
+        border-color: #0073e6;
+        box-shadow: 0 0 0 3px rgba(0, 115, 230, 0.2);
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    button {
+        background: #0073e6;
+        color: white;
+        padding: 1rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 0.5rem;
+    }
+
+    button:hover {
+        background: #0056b3;
+        transform: translateY(-1px);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    @media (max-width: 480px) {
+        .form-container {
+            padding: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        input, textarea, button {
+            padding: 0.7rem;
+        }
+    }
+</style>
+
+<div class="form-container">
+    <h2>Create a New Course</h2>
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="title">Course Title</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="fee">Fee (in INR)</label>
+            <input type="number" step="0.01" id="fee" name="fee" required>
+        </div>
+
+        <div class="form-group">
+            <label for="duration">Duration</label>
+            <input type="text" id="duration" name="duration" required>
+        </div>
+
+        <button type="submit">Create Course</button>
+    </form>
+</div>
+{% endblock %}

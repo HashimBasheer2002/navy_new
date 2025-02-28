@@ -1,0 +1,174 @@
+{% extends 'base.html'%}
+{% block content %}
+<style>
+    .job-post-container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .page-title {
+        color: #2d3748;
+        font-size: 2.2rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .job-post-form {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .job-post-form p {
+        margin-bottom: 1.5rem;
+    }
+
+    .job-post-form label {
+        display: block;
+        font-weight: 500;
+        color: #4a5568;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .job-post-form input,
+    .job-post-form textarea,
+    .job-post-form select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background-color: #fff;
+        color: #2d3748;
+        box-sizing: border-box;
+    }
+
+    .job-post-form input:focus,
+    .job-post-form textarea:focus,
+    .job-post-form select:focus {
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+        outline: none;
+    }
+
+    .job-post-form textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .submit-button {
+        background: linear-gradient(to right, #3182ce, #2c5282);
+        color: white;
+        border: none;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 1rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    .submit-button:hover {
+        background: linear-gradient(to right, #2c5282, #1a365d);
+        transform: translateY(-1px);
+    }
+
+    .submit-button i {
+        font-size: 1.1rem;
+    }
+
+    /* Help text styling */
+    .helptext {
+        display: block;
+        font-size: 0.875rem;
+        color: #718096;
+        margin-top: 0.25rem;
+    }
+
+    /* Error messages */
+    .errorlist {
+        color: #e53e3e;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        list-style: none;
+        padding: 0;
+    }
+
+    /* Required field indicator */
+    .required-field::after {
+        content: "*";
+        color: #e53e3e;
+        margin-left: 4px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .job-post-container {
+            padding: 1rem;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .job-post-form {
+            padding: 1.5rem;
+        }
+
+        .submit-button {
+            padding: 0.875rem 1.25rem;
+        }
+    }
+
+    /* Animation for form appearance */
+    @keyframes formAppear {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .job-post-form {
+        animation: formAppear 0.5s ease-out;
+    }
+</style>
+
+<div class="job-post-container">
+    <h2 class="page-title">Post a New Job Opportunity</h2>
+
+    <form method="post" class="job-post-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="submit-button">
+            <i class="fas fa-paper-plane"></i>
+            <span>Post Job</span>
+        </button>
+    </form>
+</div>
+{% endblock %}

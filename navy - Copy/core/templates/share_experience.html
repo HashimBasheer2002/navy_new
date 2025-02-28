@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Share Your Experience - NavyConnect{% endblock %}
+
+{% block content %}
+<style>
+    .experience-container {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    h2 {
+        color: #2d3748;
+        margin-bottom: 1.8rem;
+        font-size: 2rem;
+        text-align: center;
+        position: relative;
+    }
+
+    h2::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: #0073e6;
+        margin: 12px auto 0;
+        border-radius: 2px;
+    }
+
+    .form-intro {
+        text-align: center;
+        color: #666;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    label {
+        color: #4a5568;
+        font-weight: 600;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    input, textarea {
+        padding: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background-color: #f8fafc;
+    }
+
+    input:focus, textarea:focus {
+        outline: none;
+        border-color: #0073e6;
+        box-shadow: 0 0 0 3px rgba(0, 115, 230, 0.2);
+        background-color: white;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 200px;
+        line-height: 1.6;
+    }
+
+    button {
+        background: #0073e6;
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    button:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 115, 230, 0.2);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    /* Icon styles */
+    .icon {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+    }
+
+    @media (max-width: 768px) {
+        .experience-container {
+            padding: 1.5rem;
+            margin: 1rem;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+        }
+
+        .form-intro {
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 0.8rem 1.5rem;
+        }
+    }
+</style>
+
+<div class="experience-container">
+    <h2>Share Your Experience</h2>
+    <p class="form-intro">Share your valuable insights and experiences with aspiring naval officers. Your story could inspire and guide the next generation.</p>
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="title">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M3 5h18v2H3V5zm0 6h18v2H3v-2zm0 6h18v2H3v-2z"/>
+                </svg>
+                Title of Your Experience
+            </label>
+            <input 
+                type="text" 
+                id="title" 
+                name="title" 
+                required
+                placeholder="e.g., 'My Journey as a Naval Officer' or 'Lessons from the Sea'"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="content">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M14 17H4v2h10v-2zm6-8H4v2h16V9zM4 15h16v-2H4v2zM4 5v2h16V5H4z"/>
+                </svg>
+                Your Story
+            </label>
+            <textarea 
+                id="content" 
+                name="content" 
+                rows="8" 
+                required
+                placeholder="Share your experience, challenges faced, lessons learned, and advice for aspirants..."
+            ></textarea>
+        </div>
+
+        <button type="submit">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+            Share Your Experience
+        </button>
+    </form>
+</div>
+{% endblock %}

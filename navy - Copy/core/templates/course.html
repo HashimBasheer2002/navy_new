@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+.courses-wrapper {
+    padding: 4rem 2rem;
+    background: white;
+    min-height: 100vh;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.course-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.page-description {
+    text-align: center;
+    margin-bottom: 5rem;
+    position: relative;
+    padding: 0 1rem;
+}
+
+.page-description:after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #D4AF37 0%, #FFD700 50%, #D4AF37 100%);
+    border-radius: 2px;
+}
+
+.page-description h2 {
+    color: #1a1a1a;
+    font-size: 3.2rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    text-transform: none;
+    letter-spacing: -1px;
+    background: linear-gradient(45deg, #1a1a1a, #2c3e50);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.page-description p {
+    color: #666;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 2.5rem;
+    padding: 1rem;
+}
+
+.course-card {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.course-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(212, 175, 55, 0.2);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #2c3e50 0%, #1a1a1a 100%);
+    color: #fff;
+    padding: 2.5rem 2rem;
+    border-radius: 24px 24px 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #D4AF37;
+}
+
+.card-body {
+    padding: 2.5rem;
+    background: white;
+}
+
+.course-info {
+    margin: 1.2rem 0;
+    color: #555;
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.course-info strong {
+    color: #1a1a1a;
+    display: inline-block;
+    width: 120px;
+    font-weight: 600;
+}
+
+.course-price {
+    font-size: 2rem;
+    color: #D4AF37;
+    font-weight: 700;
+    margin: 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.course-price small {
+    font-size: 1rem;
+    color: #666;
+    font-weight: normal;
+}
+
+.instructor-badge {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: linear-gradient(90deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 215, 0, 0.1) 100%);
+    padding: 1rem 1.5rem;
+    border-radius: 16px;
+    margin-top: 2rem;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.instructor-avatar {
+    width: 45px;
+    height: 45px;
+    background: #D4AF37;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.instructor-avatar i {
+    color: white;
+    font-size: 1.2rem;
+}
+
+.instructor-info {
+    flex: 1;
+}
+
+.instructor-info span {
+    display: block;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.instructor-info strong {
+    color: #1a1a1a;
+    font-size: 1.1rem;
+}
+
+.no-courses {
+    text-align: center;
+    color: #666;
+    font-size: 1.3rem;
+    padding: 4rem;
+    background: white;
+    border-radius: 24px;
+    margin: 2rem auto;
+    max-width: 600px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.no-courses i {
+    font-size: 4rem;
+    color: #D4AF37;
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .courses-wrapper {
+        padding: 3rem 1rem;
+    }
+
+    .page-description h2 {
+        font-size: 2.5rem;
+    }
+
+    .courses-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+</style>
+
+<div class="courses-wrapper">
+    <div class="page-description">
+        <h2>Explore Our Courses</h2>
+        <p>Join our comprehensive training programs designed and led by experienced Navy veterans. Gain valuable insights, skills, and knowledge to excel in your naval career journey.</p>
+    </div>
+
+    <div class="course-container">
+        {% if course %}
+        <div class="courses-grid">
+            {% for c in course %}
+            <div class="course-card">
+                <div class="card-header">
+                    <h2>{{ c.title }}</h2>
+                </div>
+                <div class="card-body">
+                    <p class="course-info">{{ c.description }}</p>
+                    <div class="course-price">
+                        ${{ c.fee }} <small>/ {{ c.duration }}</small>
+                    </div>
+                    <div class="instructor-badge">
+                        <div class="instructor-avatar">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="instructor-info">
+                            <span>Course Instructor</span>
+                            <strong>{{ c.veteran.user.username }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-courses">
+            <i class="fas fa-book-open"></i>
+            <p>No courses are currently available. Please check back later for new offerings.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

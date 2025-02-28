@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary-color: #4f46e5;
+        --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --transition-speed: 0.3s;
+    }
+
+    /* Container Styles */
+    .page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    /* Header Styles */
+    .header-section {
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+    }
+
+    .header-section::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 4px;
+        background: var(--primary-color);
+        border-radius: 2px;
+    }
+
+    /* Grid Layout */
+    .test-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem 0;
+    }
+
+    /* Card Styles */
+    .test-card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: var(--card-shadow);
+        transition: all var(--transition-speed);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .test-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .test-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(to right, var(--primary-color), #60a5fa);
+    }
+
+    .card-content {
+        padding: 1.5rem;
+    }
+
+    /* Title and Info Styles */
+    .test-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+
+    .test-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        color: #6b7280;
+        font-size: 0.875rem;
+    }
+
+    .duration-badge {
+        background: #f3f4f6;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .creator-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Button Styles */
+    .start-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 0.75rem 1.5rem;
+        color: white;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.3s;
+        text-decoration: none;
+        gap: 0.5rem;
+    }
+
+    /* Section-Specific Button Colors */
+    .start-button.artificer-apprentice {
+        background: #ff6347;  /* Vibrant Tomato Red */
+    }
+
+    .start-button.navy-tradesman {
+        background: #2e7d32;  /* Darker Green */
+    }
+
+    .start-button.navy-chargeman {
+        background: #f57c00;  /* Darker Orange */
+    }
+
+    .start-button.indian-navy-entrance-test {
+        background: #FFD700;  /* Navy Blue */
+    }
+
+    .start-button.indian-navy-agniveer-mr {
+        background: #7b1fa2;  /* Darker Purple */
+    }
+
+    .start-button.indian-navy-agniveer-ssr {
+        background: #c2185b;  /* Darker Pink */
+    }
+
+    .start-button.naval-dockyard {
+        background: #5d4037;  /* Darker Brown */
+    }
+
+    /* Button Hover Effects */
+    .start-button:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Empty State Styles */
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: #f9fafb;
+        border-radius: 1rem;
+        color: #6b7280;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 640px) {
+        .test-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-container {
+            padding: 1rem;
+        }
+    }
+</style>
+
+<div class="page-container">
+    <div class="header-section">
+        <h2 class="text-3xl font-bold text-gray-900">Available Mock Tests</h2>
+        <p class="text-gray-600 mt-2">Select a test to begin your practice session</p>
+    </div>
+
+    {% if tests %}
+    <div class="test-grid">
+        {% for test in tests %}
+        <div class="test-card">
+            <div class="card-content">
+                <h3 class="test-title">{{ test.get_section_display }}</h3>
+                <div class="test-info">
+                    <span class="duration-badge">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {{ test.duration }} minutes
+                    </span>
+                    <div class="creator-info">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        {{ test.created_by.username }}
+                    </div>
+                </div>
+
+                <a href="{% url 'take_test' test.id %}" class="start-button {{ test.section|slugify }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Start Test
+                </a>
+                    {% if user.role == 'veteran' %}
+
+                <a href="{% url 'delete_test'%}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this Test');">Delete</a>
+                    {% endif %}
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 class="text-lg font-medium mb-2">No Tests Available</h3>
+        <p>Check back later for new mock tests</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

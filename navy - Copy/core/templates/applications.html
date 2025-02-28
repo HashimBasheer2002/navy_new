@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Job Applications</h2>
+  <ul>
+    {% for application in applications %}
+      <li>{{ application.applicant.username }} applied for {{ application.job.title }} - {{ application.applied_at }}</li>
+    {% endfor %}
+  </ul>
+<br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br>
+{% endblock %}

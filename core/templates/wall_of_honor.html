@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block title %}Wall of Honor{% endblock %}
+
+{% block content %}
+<section class="hero bg-gradient-to-r from-slate-50 to-gray-100 py-8 mb-8 border-b">
+    <div class="container mx-auto text-center px-4">
+        <h1 class="text-3xl font-semibold text-gray-800 mb-2">Wall of Honor</h1>
+        <p class="text-gray-600 text-sm">Celebrating Excellence and Achievement</p>
+    </div>
+</section>
+
+<main class="container mx-auto px-4 py-4">
+    {% if entries %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for entry in entries %}
+        <article class="tribute-card">
+            <div class="card-content">
+                <h3 class="card-title">{{ entry.title }}</h3>
+                <div class="card-description">{{ entry.description }}</div>
+                <div class="card-date">{{ entry.created_at|date:"F j, Y" }}</div>
+
+                {% if entry.media.all %}
+                <div class="media-gallery">
+                    {% for media in entry.media.all %}
+                        {% if media.media_type == "photo" %}
+                        <div class="media-container">
+                            <img src="{{ media.media_file.url }}"
+                                 alt="Photo for {{ entry.title }}"
+                                 class="media-item"
+                                 loading="lazy">
+                        </div>
+                        {% elif media.media_type == "video" %}
+                        <div class="media-container">
+                            <video controls class="media-item" preload="none">
+                                <source src="{{ media.media_file.url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state text-center py-8">
+        <div class="text-gray-400 text-4xl mb-3">
+            <i class="fas fa-award"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-600 mb-1">No Tributes Yet</h3>
+        <p class="text-gray-500 text-sm">Be the first to share a tribute on our Wall of Honor.</p>
+    </div>
+    {% endif %}
+</main>
+
+<style>
+    .tribute-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.2s ease-in-out;
+        height: fit-content;
+        margin-bottom: 1rem;
+    }
+
+    .tribute-card:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    }
+
+    .card-content {
+        padding: 1.25rem;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a202c;
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+    }
+
+    .card-description {
+        color: #4a5568;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 0.75rem;
+        /* Removed text truncation to show full description */
+        white-space: pre-line; /* Preserves line breaks */
+    }
+
+    .card-date {
+        font-size: 0.75rem;
+        color: #718096;
+        margin-bottom: 0.75rem;
+    }
+
+    .media-gallery {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .media-container {
+        position: relative;
+        padding-top: 100%; /* Square aspect ratio for better face visibility */
+        max-height: 150px;
+        overflow: hidden;
+        border-radius: 4px;
+        background-color: #f7fafc;
+    }
+
+    .media-item {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top; /* Prioritize top of image for faces */
+    }
+
+    video.media-item {
+        object-fit: contain;
+        background: #f7fafc;
+    }
+
+    /* Grid spacing */
+    .grid {
+        gap: 2rem;
+        align-items: start;
+    }
+
+    @media (max-width: 768px) {
+        .grid {
+            gap: 1.5rem;
+        }
+
+        .card-content {
+            padding: 1rem;
+        }
+
+        .media-container {
+            padding-top: 100%; /* Maintain square aspect ratio on mobile */
+            max-height: 120px;
+        }
+    }
+
+    /* Add a "Read More" button for long descriptions */
+    .card-description.truncated {
+        max-height: 4.5em; /* Show 3 lines initially */
+        overflow: hidden;
+        position: relative;
+    }
+
+    .read-more {
+        color: #4299e1;
+        font-size: 0.8rem;
+        cursor: pointer;
+        margin-top: 0.25rem;
+        display: inline-block;
+    }
+</style>
+
+<script>
+    // Optional JavaScript to handle "Read More" functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const descriptions = document.querySelectorAll('.card-description');
+
+        descriptions.forEach(desc => {
+            if (desc.scrollHeight > desc.clientHeight) {
+                desc.classList.add('truncated');
+                const readMore = document.createElement('span');
+                readMore.classList.add('read-more');
+                readMore.textContent = 'Read More';
+                desc.after(readMore);
+
+                readMore.addEventListener('click', () => {
+                    desc.classList.remove('truncated');
+                    readMore.style.display = 'none';
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}
