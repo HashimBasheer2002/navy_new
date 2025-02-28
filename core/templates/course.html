@@ -231,7 +231,7 @@
                 <div class="card-body">
                     <p class="course-info">{{ c.description }}</p>
                     <div class="course-price">
-                        ${{ c.fee }} <small>/ {{ c.duration }}</small>
+                        {{ c.fee }}.Rs<small>/ {{ c.duration }}</small>
                     </div>
                     <div class="instructor-badge">
                         <div class="instructor-avatar">
@@ -242,6 +242,8 @@
                             <strong>{{ c.veteran.user.username }}</strong>
                         </div>
                     </div>
+                    <a href="{% url 'purchase_course' c.id %}" class="btn btn-primary">Buy Now</a>
+
                 </div>
             </div>
             {% endfor %}

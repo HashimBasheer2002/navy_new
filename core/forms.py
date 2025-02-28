@@ -86,3 +86,12 @@ class WallMediaForm(forms.ModelForm):
     class Meta:
         model = WallMedia
         fields = ['media_file', 'media_type']
+
+
+from django import forms
+from .models import StudyMaterial
+
+class StudyMaterialForm(forms.ModelForm):
+    class Meta:
+        model = StudyMaterial
+        fields = ['title', 'description', 'image', 'purchase_link']

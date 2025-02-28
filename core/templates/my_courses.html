@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .courses-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+    }
+
+    .page-description {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .page-description h2 {
+        font-size: 2.2rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-description p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    .courses-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .course-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .course-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+    }
+
+    .card-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .course-info {
+        color: #555;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 4.5rem;
+    }
+
+    .course-price {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #27ae60;
+        margin-bottom: 1rem;
+    }
+
+    .course-price small {
+        font-weight: normal;
+        color: #777;
+    }
+
+    .instructor-badge {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+
+    .instructor-avatar {
+        width: 40px;
+        height: 40px;
+        background-color: #e1e5eb;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 1rem;
+    }
+
+    .instructor-avatar i {
+        font-size: 1.2rem;
+        color: #555;
+    }
+
+    .instructor-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .instructor-info span {
+        font-size: 0.8rem;
+        color: #777;
+    }
+
+    .instructor-info strong {
+        color: #333;
+    }
+
+    .no-courses {
+        text-align: center;
+        padding: 4rem 2rem;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        color: #777;
+    }
+
+    .no-courses i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: #ddd;
+    }
+
+    .no-courses p {
+        font-size: 1.2rem;
+    }
+
+    @media (max-width: 768px) {
+        .courses-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-description h2 {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+
+<div class="courses-wrapper">
+    <div class="page-description">
+        <h2>Course will be start soon</h2>
+        <p>Only need to make payment when course begin</p>
+    </div>
+    <div class="course-container">
+        {% if courses %}
+        <div class="courses-grid">
+            {% for course in courses %}
+            <div class="course-card">
+                <div class="card-header">
+                    <h2>{{ course.title }}</h2>
+                </div>
+                <div class="card-body">
+                    <p class="course-info">{{ course.description }}</p>
+                    <div class="course-price">
+                        {{ course.fee }} Rs <small>/ {{ course.duration }}</small>
+                    </div>
+                    <div class="instructor-badge">
+                        <div class="instructor-avatar">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="instructor-info">
+                            <span>Instructor</span>
+                            <strong>{{ course.veteran.user.username }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-courses">
+            <i class="fas fa-book-open"></i>
+            <p>You haven't purchased any courses yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

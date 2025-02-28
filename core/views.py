@@ -22,11 +22,125 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import WallOfHonor, WallMedia
 from .forms import WallOfHonorForm, WallMediaForm
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import razorpay
+from .models import Membership
+from django.conf import settings
 @login_required
 def home(request):
     role = request.user.groups.first().name if request.user.groups.exists() else 'guest'
     experiences = Experience.objects.all().order_by('-created_at')  # Order by latest shared experience
     return render(request, 'home.html', {'role': role, 'experiences': experiences})
+
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+import razorpay
+from django.conf import settings
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
+from .models import Membership  # Ensure you import the Membership model
+
+# Initialize Razorpay client
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+
+def create_order(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    amount = 30000  # ₹300 in paise
+    order_data = {
+        "amount": amount,
+        "currency": "INR",
+        "payment_capture": "1"
+    }
+    order = razorpay_client.order.create(data=order_data)
+    return JsonResponse(order)
+
+
+# Payment success handler
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import razorpay
+from django.conf import settings
+from .models import Membership
+
+# Initialize Razorpay client
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+from django.shortcuts import redirect
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import razorpay
+from django.conf import settings
+from .models import Membership
+
+# Initialize Razorpay client
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+
+@csrf_exempt
+def payment_success(request):
+    if request.method == "POST":
+        data = request.POST
+        payment_id = data.get("razorpay_payment_id")
+    elif request.method == "GET":
+        payment_id = request.GET.get("payment_id")  # Extract from GET request
+
+    if not payment_id:
+        return JsonResponse({"error": "Payment ID not provided"}, status=400)
+
+    try:
+        # Verify payment
+        razorpay_client.payment.fetch(payment_id)
+
+        # Activate membership for the user
+        membership, created = Membership.objects.get_or_create(user=request.user)
+        membership.is_active = True
+        membership.payment_id = payment_id
+        membership.save()
+
+        # Redirect to create_course after successful payment
+        return redirect("create_course")
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+
+def subscribe(request):
+    return render(request, "subscribe.html", {"razorpay_key": settings.RAZORPAY_KEY_ID})
+
+
+# Middleware for access control
+from functools import wraps
+from django.shortcuts import redirect
+from .models import Membership  # Ensure you import Membership
+
+from django.shortcuts import redirect
+from functools import wraps
+from .models import Membership
+
+def membership_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        try:
+            membership = Membership.objects.get(user=request.user)
+            if not membership.is_active:
+                return redirect("subscribe")  # Redirect non-members to the subscription page
+        except Membership.DoesNotExist:
+            return redirect("subscribe")  # If no membership, redirect to subscribe
+
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped_view
+
+
+
+
+# Protected page
+
+
 
 
 def signup(request):
@@ -117,6 +231,7 @@ def view_experience(request):
 
 
 @login_required
+@membership_required
 def create_course(request):
     if request.method == 'POST':
         title = request.POST['title']
@@ -139,6 +254,45 @@ def create_course(request):
 def view_course(request):
     course = Course.objects.all()
     return render(request,'course.html',{'course':course})
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Course, Purchase
+
+from .models import Course, UserCourse
+
+
+def buy_course(request, course_id):
+    if request.user.is_authenticated:
+        course = Course.objects.get(id=course_id)
+
+        # Check if the user already owns the course
+        if not UserCourse.objects.filter(user=request.user, course=course).exists():
+            UserCourse.objects.create(user=request.user, course=course)  # Store who applied
+
+        return redirect('my_courses')  # Redirect to My Courses after purchase
+
+    return redirect('login')  # Redirect to login if not authenticated
+
+
+def course_applicants(request, course_id):
+    course = Course.objects.get(id=course_id)
+
+    # Ensure only the veteran (course creator) can view
+    if request.user != course.veteran:
+        return redirect('home')
+
+    applicants = UserCourse.objects.filter(course=course)
+    return render(request, "course_applicants.html", {"course": course, "applicants": applicants})
+
+@login_required
+def my_courses(request):
+    purchased_courses = Purchase.objects.filter(user=request.user, payment_status=True).select_related('course')
+    courses = [purchase.course for purchase in purchased_courses]
+
+    return render(request, 'my_courses.html', {'courses': courses})
 
 
 @login_required
@@ -269,6 +423,7 @@ def is_admin(user):
 
 
 @login_required
+ # Ensures only paid members can access
 @user_passes_test(is_admin)
 def post_job(request):
     if request.method == "POST":
@@ -277,9 +432,10 @@ def post_job(request):
             job = form.save(commit=False)
             job.posted_by = request.user
             job.save()
-            return redirect('job_list')
+            return redirect('job_list')  # Redirect to job listings
     else:
         form = JobOpportunityForm()
+
     return render(request, 'post_job.html', {'form': form})
 
 
@@ -354,7 +510,36 @@ def view_aspirant_profile(request):
     experiences = Experience.objects.filter(aspirant=profile).order_by('-created_at')
     return render(request, 'view_aspirant_profile.html', {'profile': profile})
 
+# views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import VeteranProfile
+from .forms import VeteranProfileForm
 
+@login_required
+def create_or_update_profile(request):
+    # Check if the user already has a profile
+    try:
+        profile = request.user.veteranprofile
+    except VeteranProfile.DoesNotExist:
+        profile = None
+
+    if request.method == 'POST':
+        if profile:
+            form = VeteranProfileForm(request.POST, request.FILES, instance=profile)
+        else:
+            form = VeteranProfileForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            # Save the profile
+            profile = form.save(commit=False)
+            profile.user = request.user  # Set the user to the current logged-in user
+            profile.save()
+            return redirect('view_profile')  # Redirect to the profile page after saving
+    else:
+        form = VeteranProfileForm(instance=profile)
+
+    return render(request, 'edit_profile.html', {'form': form})
 
 
 # Check if user is admin (or you can use is_superuser or a specific permission)
@@ -400,3 +585,48 @@ def wall_of_honor(request):
     # Everyone can view the tributes
     entries = WallOfHonor.objects.all().order_by('-created_at')
     return render(request, 'wall_of_honor.html', {'entries': entries})
+
+
+
+from .models import StudyMaterial
+def study_materials(request):
+    materials = StudyMaterial.objects.all().order_by('-added_at')
+    return render(request, 'study_meterials.html', {'materials': materials})
+
+
+from django.shortcuts import render, redirect
+from .models import StudyMaterial
+from .forms import StudyMaterialForm
+
+
+def add_study_material(request):
+    if request.method == 'POST':
+        form = StudyMaterialForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('study_materials')  # Redirect to the study materials list page
+    else:
+        form = StudyMaterialForm()
+
+    return render(request, 'add_study_meterial.html', {'form': form})
+
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.admin.views.decorators import staff_member_required
+def admin_required(view_func):
+    return user_passes_test(lambda user: user.is_superuser)(view_func)
+
+from django.contrib.auth import get_user_model
+User = get_user_model()
+@staff_member_required
+def user_list(request):
+    users = User.objects.all()
+    return render(request, "users_list.html", {"users": users})
+
+
+def list_veterans(request):
+    veterans = VeteranProfile.objects.all()  # Fetch all veteran profiles
+    return render(request, 'veteran_list.html', {'veterans': veterans})
+
+def view_veteran_profile(request, pk):
+    veteran = get_object_or_404(VeteranProfile, pk=pk)  # Fetch the specific veteran profile
+    return render(request, 'veteran_profile.html', {'veteran': veteran})

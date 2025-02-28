@@ -3,6 +3,18 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('study-materials/', views.study_materials, name='study_materials'),
+    path('add-study-material/', views.add_study_material, name='add_study_material'),
+    path('course/<int:course_id>/applicants/', views.course_applicants, name="course_applicants"),
+    path("users_list/", views.user_list, name="user_list"),
+    path('veterans/', views.list_veterans, name='veteran_list'),
+    path('veterans/<int:pk>/', views.view_veteran_profile, name='view_veteran_profile'),
+
+    path("subscribe/", views.subscribe, name="subscribe"),
+    path("create-order/", views.create_order, name="create_order"),
+    path("verify-payment/", views.payment_success, name="verify_payment"),
+    path('purchase/<int:course_id>/', views.buy_course, name='purchase_course'),
+    path('my-courses/', views.my_courses, name='my_courses'),
     path('signup/', views.signup, name='signup'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),

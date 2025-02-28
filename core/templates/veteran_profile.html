@@ -1,0 +1,21 @@
+<!-- veteran_profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ veteran.user.username }}'s Profile</title>
+</head>
+<body>
+    <h1>{{ veteran.user.username }}'s Profile</h1>
+    <p><strong>Rank:</strong> {{ veteran.rank }}</p>
+    <p><strong>Years of Service:</strong> {{ veteran.years_of_service }}</p>
+    <p><strong>Achievements:</strong> {{ veteran.achievements }}</p>
+    <p><strong>Bio:</strong> {{ veteran.bio }}</p>
+    {% if veteran.profile_photo %}
+        <img src="{{ veteran.profile_photo.url }}" alt="{{ veteran.user.username }}'s Profile Photo">
+    {% endif %}
+    <br>
+    <a href="{% url 'veteran_list' %}">Back to Veterans List</a>
+</body>
+</html>

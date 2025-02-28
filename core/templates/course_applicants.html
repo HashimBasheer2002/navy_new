@@ -1,0 +1,11 @@
+<h2>Applicants for "{{ course.title }}"</h2>
+
+<ul>
+    {% for applicant in applicants %}
+        <li>{{ applicant.user.username }}</li>
+    {% empty %}
+        <p>No one has applied yet.</p>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'home' %}">Back to Home</a>

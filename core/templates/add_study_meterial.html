@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Add Study Material{% endblock %}
+{% block content %}
+
+<style>
+  .form-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  label {
+    font-weight: bold;
+  }
+  input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  button {
+    width: 100%;
+    background: #0073e6;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  button:hover {
+    background: #005bb5;
+  }
+</style>
+
+<div class="form-container">
+  <h2>Add Study Material</h2>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Material</button>
+  </form>
+</div>
+
+{% endblock %}

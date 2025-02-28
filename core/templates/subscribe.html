@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe - Membership</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h2>Membership Subscription</h2>
+    <p>Subscribe for ₹300 per month to access premium features.</p>
+
+    <button id="pay-button">Subscribe Now</button>
+
+    <script>
+        document.getElementById("pay-button").onclick = function () {
+            var options = {
+                "key": "{{ razorpay_key }}", // Now using the key from Django
+                "amount": "30000", // 300 INR in paise
+                "currency": "INR",
+                "name": "Your Website",
+                "description": "Membership Subscription",
+                "image": "your_logo_url",
+                "handler": function (response) {
+                    alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+                    window.location.href = "/verify-payment?payment_id=" + response.razorpay_payment_id;
+                },
+                "prefill": {
+                    "name": "Your Name",
+                    "email": "your_email@example.com",
+                    "contact": "9999999999"
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+        };
+    </script>
+</body>
+</html>

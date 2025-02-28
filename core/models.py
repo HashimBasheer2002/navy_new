@@ -164,3 +164,35 @@ class WallMedia(models.Model):
 
     def __str__(self):
         return f"{self.wall_entry.title} - {self.media_type}"
+
+
+from django.db import models
+
+class StudyMaterial(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    image = models.ImageField(upload_to='study_materials/')
+    purchase_link = models.URLField()
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+class Membership(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=False)
+    payment_id = models.CharField(max_length=100, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Purchase(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    payment_status = models.BooleanField(default=False)  # Track payment success
+    purchased_at = models.DateTimeField(auto_now_add=True)
+
+class UserCourse(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Student who applied
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.username} applied for {self.course.title}"

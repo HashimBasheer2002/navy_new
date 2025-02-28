@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+
+{% block title %}Veterans List{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1 class="hero-title">Veterans <span class="accent">Directory</span></h1>
+        <p class="hero-subtitle">Honoring those who served with distinction</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="veterans-showcase">
+        {% if veterans %}
+            <div class="veterans-grid">
+                {% for veteran in veterans %}
+                    <div class="veteran-card">
+                        <div class="card-decoration"></div>
+                        <div class="card-content">
+                            <div class="veteran-avatar">
+                                <div class="avatar-frame">
+                                    <img src="https://ui-avatars.com/api/?name={{ veteran.user.username }}&background=random" alt="{{ veteran.user.username }}">
+                                </div>
+                                <div class="avatar-status"></div>
+                            </div>
+
+                            <div class="veteran-details">
+                                <h3 class="veteran-name">{{ veteran.user.username }}</h3>
+                                <div class="rank-badge">
+                                    <span class="rank-icon">★</span>
+                                    <span class="rank-text">{{ veteran.rank }}</span>
+                                </div>
+
+                                <a href="{% url 'view_veteran_profile' veteran.pk %}" class="profile-link">
+                                    <span class="link-text">View Profile</span>
+                                    <span class="link-icon">→</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <h2>No Veterans Found</h2>
+                <p>There are currently no veterans registered in our database.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap');
+
+    /* Reset and base styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #f8f9fb;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    /* Hero section */
+    .hero-section {
+        position: relative;
+        height: 300px;
+        background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+        margin-bottom: 3rem;
+        overflow: hidden;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(45, 55, 72, 0.9) 0%, rgba(17, 24, 39, 0.85) 100%);
+    }
+
+    .hero-content {
+        position: relative;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        z-index: 10;
+    }
+
+    .hero-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 1rem;
+        letter-spacing: -0.5px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .accent {
+        color: #6d28d9;
+        position: relative;
+        display: inline-block;
+    }
+
+    .accent::after {
+        content: '';
+        position: absolute;
+        bottom: 5px;
+        left: 0;
+        width: 100%;
+        height: 8px;
+        background-color: rgba(109, 40, 217, 0.3);
+        z-index: -1;
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+        color: rgba(255, 255, 255, 0.9);
+        max-width: 600px;
+    }
+
+    /* Container */
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    /* Veterans showcase */
+    .veterans-showcase {
+        position: relative;
+        margin-top: -80px;
+        padding-bottom: 3rem;
+    }
+
+    /* Veterans grid */
+    .veterans-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2.5rem;
+    }
+
+    /* Veteran card */
+    .veteran-card {
+        position: relative;
+        background-color: #fff;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .veteran-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(109, 40, 217, 0.15);
+    }
+
+    .card-decoration {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: linear-gradient(90deg, #6d28d9, #8b5cf6, #a78bfa);
+    }
+
+    .card-content {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    /* Avatar styling */
+    .veteran-avatar {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .avatar-frame {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        padding: 5px;
+        background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+    }
+
+    .avatar-frame img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid white;
+    }
+
+    .avatar-status {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        width: 20px;
+        height: 20px;
+        background-color: #10b981;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Veteran details */
+    .veteran-details {
+        width: 100%;
+    }
+
+    .veteran-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.75rem;
+    }
+
+    .rank-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background-color: #f3f4f6;
+        border-radius: 30px;
+        margin-bottom: 1.5rem;
+    }
+
+    .rank-icon {
+        color: #6d28d9;
+        font-size: 1rem;
+        margin-right: 0.5rem;
+    }
+
+    .rank-text {
+        font-weight: 600;
+        color: #4b5563;
+    }
+
+    .profile-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(90deg, #6d28d9, #8b5cf6);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(109, 40, 217, 0.25);
+    }
+
+    .profile-link:hover {
+        background: linear-gradient(90deg, #5b21b6, #7c3aed);
+        box-shadow: 0 8px 25px rgba(109, 40, 217, 0.4);
+    }
+
+    .link-text {
+        margin-right: 0.5rem;
+    }
+
+    .link-icon {
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .profile-link:hover .link-icon {
+        transform: translateX(5px);
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        background-color: white;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        color: #6b7280;
+        font-size: 1.1rem;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    /* Animation for cards */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .veteran-card {
+        animation: fadeInUp 0.6s ease-out forwards;
+        opacity: 0;
+    }
+
+    .veteran-card:nth-child(1) { animation-delay: 0.1s; }
+    .veteran-card:nth-child(2) { animation-delay: 0.2s; }
+    .veteran-card:nth-child(3) { animation-delay: 0.3s; }
+    .veteran-card:nth-child(4) { animation-delay: 0.4s; }
+    .veteran-card:nth-child(5) { animation-delay: 0.5s; }
+    .veteran-card:nth-child(6) { animation-delay: 0.6s; }
+
+    /* Glass effect on hover */
+    .veteran-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .veteran-card:hover::before {
+        opacity: 1;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+
+        .veterans-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .avatar-frame {
+            width: 100px;
+            height: 100px;
+        }
+    }
+</style>
+{% endblock %}

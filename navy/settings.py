@@ -133,3 +133,7 @@ AUTH_USER_MODEL = 'core.CustomUser'
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
+
+
+RAZORPAY_KEY_ID = 'rzp_test_JgjeX5TNahEm3c'
+RAZORPAY_KEY_SECRET = 'aTcDkgmbhCZE6rdmbYRd0CDv'
