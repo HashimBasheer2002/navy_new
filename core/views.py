@@ -33,6 +33,14 @@ def home(request):
     experiences = Experience.objects.all().order_by('-created_at')  # Order by latest shared experience
     return render(request, 'home.html', {'role': role, 'experiences': experiences})
 
+def about(request):
+    return render(request,'about.html')
+
+
+
+def index(request):
+    return render(request,'index.html')
+
 razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
 import razorpay
 from django.conf import settings
@@ -231,7 +239,6 @@ def view_experience(request):
 
 
 @login_required
-@membership_required
 def create_course(request):
     if request.method == 'POST':
         title = request.POST['title']
@@ -304,20 +311,15 @@ def view_profile(request):
 @login_required
 def edit_profile(request):
     """Allow veterans to create or update their profile."""
-    try:
-        profile = VeteranProfile.objects.get(user=request.user)
-    except VeteranProfile.DoesNotExist:
-        profile = None
+
+    profile, created = VeteranProfile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
         form = VeteranProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
-            veteran_profile = form.save(commit=False)
-            veteran_profile.user = request.user
-            veteran_profile.save()
+            form.save()
             return redirect('view_profile')
     else:
-        # Always initialize the form, even if no profile exists
         form = VeteranProfileForm(instance=profile)
 
     return render(request, 'edit_profile.html', {'form': form})
@@ -331,6 +333,8 @@ def memebership(request):
     return render(request,'membership.html')
 
 
+from django.utils.timezone import now
+
 @login_required
 def create_mock_test(request):
     if request.method == "POST":
@@ -342,7 +346,8 @@ def create_mock_test(request):
             return redirect('add_question', test_id=mock_test.id)
     else:
         form = MockTestForm()
-    return render(request, 'create_mock_test.html', {'form': form})
+
+    return render(request, 'create_mock_test.html', {'form': form, 'current_time': now()})
 
 
 def delete_test(request):
@@ -377,54 +382,187 @@ def add_question(request, test_id):
 
 
 #view test
+@login_required
 def mock_test_list(request):
     tests = MockTest.objects.all()
-    return render(request, 'mock_test_list.html', {'tests': tests})
+
+    # Fetch the latest 5 admin suggestions (excluding empty ones)
+    recent_suggestions = MockTestResult.objects.exclude(improvement_suggestion__isnull=True).exclude(improvement_suggestion="").order_by('-date_taken')[:5]
+
+    return render(request, 'mock_test_list.html', {
+        'tests': tests,
+        'recent_suggestions': recent_suggestions  # Pass suggestions to template
+    })
 
 
 #attempting test
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
+from .models import MockTest, Question, UserResponse
+from .forms import TestSubmissionForm
+
+from django.utils.timezone import now
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import MockTest, UserResponse
+from .forms import TestSubmissionForm
+
+from django.shortcuts import redirect
+from django.utils.timezone import now
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.utils.timezone import now
+from .models import MockTest, UserResponse, MockTestResult, VeteranProfile
+from .forms import TestSubmissionForm
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import MockTest, UserResponse, MockTestResult, VeteranProfile
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import MockTest, UserResponse, MockTestResult, VeteranProfile
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from .models import MockTest, UserResponse, MockTestResult, VeteranProfile
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from .models import MockTest, UserResponse, MockTestResult, VeteranProfile
+
+import json
+
 @login_required
 def take_test(request, test_id):
     mock_test = get_object_or_404(MockTest, id=test_id)
-    questions = mock_test.questions.all().order_by('id')  # Ensure correct ordering
+    questions = mock_test.questions.all().order_by('id')
+    time_limit = mock_test.duration * 60
 
     if request.method == "POST":
         form = TestSubmissionForm(request.POST, questions=questions)
         if form.is_valid():
             score = 0
+            responses = {}
+
             for question in questions:
-                selected_option = int(form.cleaned_data.get(f'question_{question.id}', 0))
-                if selected_option == question.correct_option:
+                selected_option = request.POST.get(f'question_{question.id}')
+                responses[str(question.id)] = int(selected_option) if selected_option else "Not Answered"
+
+                if selected_option and int(selected_option) == question.correct_option:
                     score += 1
 
-            UserResponse.objects.create(user=request.user, test=mock_test, score=score)
+            with transaction.atomic():
+                user_response = UserResponse.objects.create(
+                    user=request.user, test=mock_test, score=score, responses=json.dumps(responses)
+                )
+
+                try:
+                    veteran_profile = VeteranProfile.objects.get(user=request.user)
+                    MockTestResult.objects.create(
+                        veteran=veteran_profile,
+                        mock_test=mock_test,
+                        score=score
+                    )
+                except VeteranProfile.DoesNotExist:
+                    pass
+
             return redirect('test_result', test_id=test_id)
 
     else:
         form = TestSubmissionForm(questions=questions)
 
-    return render(request, 'take_test.html', {'mock_test': mock_test, 'form': form, 'questions': questions})
+    return render(request, 'take_test.html', {
+        'mock_test': mock_test,
+        'form': form,
+        'questions': questions,
+        'time_limit': time_limit
+    })
 
-
-#test result
 
 @login_required
 def test_result(request, test_id):
-    test = get_object_or_404(MockTest, id=test_id)
-    result = UserResponse.objects.filter(user=request.user, test=test).last()
-    return render(request, 'test_result.html', {'test': test, 'result': result})
+    """Displays the results of a mock test taken by the user."""
+    mock_test = get_object_or_404(MockTest, id=test_id)
+    questions = mock_test.questions.all()
 
+    # Get the latest user response for this test
+    user_response = UserResponse.objects.filter(user=request.user, test=mock_test).order_by('-id').first()
 
+    selected_answers = {}
+    if user_response:
+        responses_dict = json.loads(user_response.responses)  # ✅ Convert string back to dictionary
+        for q_id, answer in responses_dict.items():  # Now, responses_dict is a valid dictionary
+            question = questions.filter(id=int(q_id)).first()
+            if question:
+                selected_answers[int(q_id)] = (
+                    question.get_option_display(int(answer))
+                    if answer != "Not Answered"
+                    else "Not Answered"
+                )
 
+    return render(request, "test_result.html", {
+        "mock_test": mock_test,
+        "questions": questions,
+        "selected_answers": selected_answers,
+        "score": user_response.score if user_response else 0,
+    })
 
-def is_admin(user):
-    return user.is_superuser
 
 
 @login_required
- # Ensures only paid members can access
-@user_passes_test(is_admin)
+def mock_test_results(request):
+    if not request.user.is_staff:  # Ensure only admin users can access
+        return HttpResponseForbidden("You are not authorized to view this page.")
+
+    results = MockTestResult.objects.all().order_by('-date_taken')
+
+    return render(request, 'view_test_results.html', {'results': results})
+
+
+
+
+from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse
+from django.http import HttpResponseForbidden
+from core.models import MockTestResult
+
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.http import HttpResponseForbidden
+from django.contrib.auth.decorators import login_required
+from .models import MockTestResult
+
+
+@login_required
+def suggest_improvement(request, result_id):
+    if not request.user.is_staff:
+        return HttpResponseForbidden("You are not authorized to do this.")
+
+    result = get_object_or_404(MockTestResult, id=result_id)
+
+    if request.method == "POST":
+        suggestion = request.POST.get("improvement")
+        result.improvement_suggestion = suggestion
+        result.save()
+
+    # Redirect to a page where the aspirant can see only their own suggestions
+    return redirect(reverse('user_suggestions'))
+
+
+def is_admin(user):
+    return user.is_superuser  # ✅ Corrected
+
+
+
+@login_required
+@user_passes_test(is_admin)  # Ensures only superusers can access
 def post_job(request):
     if request.method == "POST":
         form = JobOpportunityForm(request.POST)
@@ -437,7 +575,6 @@ def post_job(request):
         form = JobOpportunityForm()
 
     return render(request, 'post_job.html', {'form': form})
-
 
 def job_list(request):
     jobs = JobOpportunity.objects.all()
@@ -453,7 +590,7 @@ def apply_job(request, job_id):
         if form.is_valid():
             application = form.save(commit=False)
             application.job = job
-            application.applicant = request.user
+            application.applicant = request.user  # Automatically assign the logged-in user
             application.save()
             return redirect('job_list')
     else:
@@ -590,8 +727,52 @@ def wall_of_honor(request):
 
 from .models import StudyMaterial
 def study_materials(request):
-    materials = StudyMaterial.objects.all().order_by('-added_at')
-    return render(request, 'study_meterials.html', {'materials': materials})
+    materials = StudyMaterial.objects.filter(is_special=False).order_by('-added_at')
+    special_book = StudyMaterial.objects.filter(is_special=True).first()  # Only one special book
+
+    return render(request, 'study_meterials.html', {
+        'materials': materials,
+        'special_book': special_book
+    })
+
+
+import razorpay
+from django.conf import settings
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import StudyMaterial
+from django.views.decorators.csrf import csrf_exempt
+
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+def razorpay_payment(request, material_id):
+    material = get_object_or_404(StudyMaterial, id=material_id)
+
+    order_amount = 50000  # Set price in paise (e.g., ₹500 = 50000 paise)
+    order_currency = 'INR'
+    order_receipt = f'order_rcptid_{material.id}'
+
+    order = razorpay_client.order.create({
+        "amount": order_amount,
+        "currency": order_currency,
+        "receipt": order_receipt,
+        "payment_capture": "1"
+    })
+
+    return render(request, 'payment_page.html', {
+        'material': material,
+        'order_id': order['id'],
+        'razorpay_key': settings.RAZORPAY_KEY_ID
+    })
+
+@csrf_exempt
+def payment_success(request):
+    return render(request, 'download.html')
+
+
+from django.http import FileResponse
+
+
+
 
 
 from django.shortcuts import render, redirect
@@ -599,16 +780,175 @@ from .models import StudyMaterial
 from .forms import StudyMaterialForm
 
 
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.contrib import messages
+from .forms import StudyMaterialForm
+
 def add_study_material(request):
     if request.method == 'POST':
-        form = StudyMaterialForm(request.POST, request.FILES)
+        form = StudyMaterialForm(request.POST, request.FILES)  # Handle files
         if form.is_valid():
             form.save()
-            return redirect('study_materials')  # Redirect to the study materials list page
+            messages.success(request, "Study material added successfully!")
+            return redirect(reverse('study_materials'))  # Redirect after success
+        else:
+            messages.error(request, "Error adding the study material. Please check the form.")
     else:
         form = StudyMaterialForm()
 
     return render(request, 'add_study_meterial.html', {'form': form})
+
+
+
+
+import razorpay
+from django.conf import settings
+from django.shortcuts import get_object_or_404, redirect, render
+from django.http import HttpResponse
+from core.models import StudyMaterial ,Payment # Import Payment model if you track payments
+
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+import razorpay
+from django.conf import settings
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse, JsonResponse
+from .models import StudyMaterial, Payment
+
+# Initialize Razorpay client (Ensure this is correctly configured)
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+def razorpay_payment(request, material_id):
+    study_material = get_object_or_404(StudyMaterial, id=material_id)
+
+    # Ensure the price is valid (minimum 1 INR)
+    if study_material.price is None or study_material.price < 1:
+        return HttpResponse("Error: Invalid price. The amount must be at least ₹1.00", status=400)
+
+    # Convert price to paise (Razorpay uses paise)
+    amount = int(study_material.price * 100)
+
+    # Check if the user has already purchased this material
+    if request.user.is_authenticated:
+        existing_payment = Payment.objects.filter(user=request.user, study_material=study_material, status="SUCCESS").exists()
+        if existing_payment:
+            return redirect(study_material.pdf_file.url)  # Redirect to download if already purchased
+
+    # Create Razorpay order
+    try:
+        order_data = {
+            "amount": amount,
+            "currency": "INR",
+            "payment_capture": 1,
+            "notes": {
+                "user_email": request.user.email if request.user.is_authenticated else "guest",
+                "study_material": study_material.title
+            }
+        }
+        order = razorpay_client.order.create(order_data)
+    except razorpay.errors.BadRequestError as e:
+        return HttpResponse(f"Error creating Razorpay order: {str(e)}", status=400)
+
+    # Render payment page with order details
+    context = {
+        "study_material": study_material,
+        "order_id": order["id"],
+        "amount": amount / 100,  # Convert back to INR for display
+        "key": settings.RAZORPAY_KEY_ID,
+        "material_id": material_id  # ✅ Ensure this is correctly passed
+    }
+    return render(request, "razorpay_payment.html", context)
+
+
+
+
+
+
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+def create_payment(request, material_id):
+    study_material = get_object_or_404(StudyMaterial, id=material_id)
+
+    if study_material.is_purchased:
+        return JsonResponse({"error": "Already Purchased"}, status=400)
+
+    amount = int(study_material.price * 100)  # Convert to paise
+    order_data = {
+        "amount": amount,
+        "currency": "INR",
+        "payment_capture": 1
+    }
+
+    order = razorpay_client.order.create(order_data)
+
+    return JsonResponse({
+        "order_id": order["id"],
+        "amount": amount,
+        "key": settings.RAZORPAY_KEY_ID,
+        "material_id": study_material.id
+    })
+
+
+from django.views.decorators.csrf import csrf_exempt
+
+from django.shortcuts import redirect
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from core.models import StudyMaterial, Payment
+
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from core.models import StudyMaterial, Payment
+
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import StudyMaterial, PurchasedMaterial
+
+
+@login_required
+def payment_success(request, material_id):
+    try:
+        material = StudyMaterial.objects.get(id=material_id)
+
+        # Check if user already has this book
+        if not PurchasedMaterial.objects.filter(user=request.user, material=material).exists():
+            PurchasedMaterial.objects.create(user=request.user, material=material)
+            return JsonResponse({'message': 'Purchase recorded successfully'})
+        else:
+            return JsonResponse({'message': 'Book already purchased'})
+
+    except StudyMaterial.DoesNotExist:
+        return JsonResponse({'error': 'Material not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+from django.shortcuts import get_object_or_404
+from django.http import FileResponse
+from core.models import Payment
+
+from django.shortcuts import get_object_or_404
+from django.http import FileResponse
+from core.models import Payment
+
+from django.shortcuts import render
+from .models import PurchasedMaterial
+
+
+def my_books(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    purchased_books = PurchasedMaterial.objects.filter(user=request.user).select_related('material')
+
+    return render(request, 'my_books.html', {'purchased_books': purchased_books})
+
+
+
 
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.admin.views.decorators import staff_member_required
@@ -630,3 +970,79 @@ def list_veterans(request):
 def view_veteran_profile(request, pk):
     veteran = get_object_or_404(VeteranProfile, pk=pk)  # Fetch the specific veteran profile
     return render(request, 'veteran_profile.html', {'veteran': veteran})
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .models import Campaign, Participation
+from django.contrib import messages
+
+
+# Check if user is admin
+def is_admin(user):
+    return user.is_superuser
+
+
+# View all campaigns
+@login_required
+def view_campaigns(request):
+    campaigns = Campaign.objects.all()
+    participated_campaigns = Participation.objects.filter(user=request.user).values_list("campaign_id", flat=True)
+    return render(request, "view_campaigns.html",
+                  {"campaigns": campaigns, "participated_campaigns": participated_campaigns})
+
+
+# Mark as participate
+@login_required
+def participate_campaign(request, campaign_id):
+    campaign = get_object_or_404(Campaign, id=campaign_id)
+    Participation.objects.get_or_create(user=request.user, campaign=campaign)
+    messages.success(request, "You have successfully participated in the campaign!")
+    return redirect("view_campaigns")
+
+
+# Admin - Add campaign
+@user_passes_test(is_admin)
+def add_campaign(request):
+    if request.method == "POST":
+        title = request.POST["title"]
+        description = request.POST["description"]
+        date = request.POST["date"]
+        Campaign.objects.create(title=title, description=description, date=date)
+        messages.success(request, "Campaign added successfully!")
+        return redirect("admin_campaigns")
+
+    return render(request, "add_campaign.html")
+
+
+# Admin - Edit campaign
+@user_passes_test(is_admin)
+def edit_campaign(request, campaign_id):
+    campaign = get_object_or_404(Campaign, id=campaign_id)
+
+    if request.method == "POST":
+        campaign.title = request.POST["title"]
+        campaign.description = request.POST["description"]
+        campaign.date = request.POST["date"]
+        campaign.save()
+        messages.success(request, "Campaign updated successfully!")
+        return redirect("admin_campaigns")
+
+    return render(request, "edit_campaign.html", {"campaign": campaign})
+
+
+# Admin - Delete campaign
+@user_passes_test(is_admin)
+def delete_campaign(request, campaign_id):
+    campaign = get_object_or_404(Campaign, id=campaign_id)
+    campaign.delete()
+    messages.success(request, "Campaign deleted successfully!")
+    return redirect("admin_campaigns")
+
+
+# Admin - View participants
+@user_passes_test(is_admin)
+def view_participants(request, campaign_id):
+    campaign = get_object_or_404(Campaign, id=campaign_id)
+    participants = Participation.objects.filter(campaign=campaign)
+    return render(request, "view_participants.html", {"campaign": campaign, "participants": participants})

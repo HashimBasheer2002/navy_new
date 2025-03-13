@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Manage Campaigns{% endblock %}
+{% block content %}
+
+<h2>Manage Campaigns</h2>
+<a href="{% url 'add_campaign' %}" class="btn btn-success">Add New Campaign</a>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for campaign in campaigns %}
+    <tr>
+      <td>{{ campaign.title }}</td>
+      <td>{{ campaign.description }}</td>
+      <td>{{ campaign.date }}</td>
+      <td>
+        <a href="{% url 'edit_campaign' campaign.id %}" class="btn btn-warning">Edit</a>
+        <a href="{% url 'delete_campaign' campaign.id %}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'view_participants' campaign.id %}" class="btn btn-info">View Participants</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

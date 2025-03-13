@@ -34,9 +34,11 @@ class NewsForm(forms.ModelForm):
 
 
 class MockTestForm(forms.ModelForm):
+    duration = forms.IntegerField(min_value=1, help_text="Duration in minutes")
+
     class Meta:
         model = MockTest
-        fields = [ 'section','duration']
+        fields = ['section', 'duration']
 
 class QuestionForm(forms.ModelForm):
     class Meta:
@@ -66,12 +68,13 @@ class TestSubmissionForm(forms.Form):
 class JobOpportunityForm(forms.ModelForm):
     class Meta:
         model = JobOpportunity
-        fields = ['title', 'description', 'section']
+        fields = ['title', 'description', 'requirements', 'section']
+
 
 class JobApplicationForm(forms.ModelForm):
     class Meta:
         model = JobApplication
-        fields = ['job', 'applicant','resume']
+        fields = ['job','resume']
 
 
 
@@ -91,7 +94,15 @@ class WallMediaForm(forms.ModelForm):
 from django import forms
 from .models import StudyMaterial
 
+from django import forms
+from .models import StudyMaterial
+
 class StudyMaterialForm(forms.ModelForm):
     class Meta:
         model = StudyMaterial
-        fields = ['title', 'description', 'image', 'purchase_link']
+        fields = ['title', 'description', 'image', 'price', 'pdf_file']  # Include PDF field
+
+
+
+
+

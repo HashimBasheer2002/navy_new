@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Your Messages</h2>
+
+{% for message in messages %}
+    <div class="message-box">
+        <p><strong>From: </strong> {{ message.sender.username }}</p>
+        <p>{{ message.content }}</p>
+        {% if request.user.groups.filter.name == "Veteran" %}
+            <a href="{% url 'reply_message' message.id %}"><button>Reply</button></a>
+        {% endif %}
+    </div>
+{% endfor %}
+
+{% endblock %}

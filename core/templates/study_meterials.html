@@ -48,9 +48,15 @@
     border-radius: 5px;
     text-decoration: none;
     font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
   }
   .buy-btn:hover {
     background: #005bb5;
+  }
+  .special-book {
+    border: 2px solid gold;
+    box-shadow: 0 0 15px gold;
   }
 </style>
 
@@ -58,15 +64,76 @@
 
 <div class="materials-container">
   {% for material in materials %}
-  <div class="card">
-    <img src="{{ material.image.url }}" alt="Book Image">
+  <div class="card {% if material.is_special %}special-book{% endif %}">
+    {% if material.image %}
+      <img src="{{ material.image.url }}" alt="Book Image">
+    {% else %}
+      <img src="/static/default-image.jpg" alt="Default Image">
+    {% endif %}
+
     <div class="card-body">
       <div class="card-title">{{ material.title }}</div>
       <div class="card-text">{{ material.description|truncatewords:20 }}</div>
-      <a href="{{ material.purchase_link }}" class="buy-btn" target="_blank">Buy Now</a>
+
+      {% if material.is_special %}
+        {% if material.is_purchased %}
+          {% if material.pdf_file %}
+            <a href="{{ material.pdf_file.url }}" class="buy-btn" download>Download PDF</a>
+          {% else %}
+            <p style="color: red;">PDF not available</p>
+          {% endif %}
+        {% else %}
+          <button onclick="initiatePayment('{{ material.id }}')">Buy Now</button>
+
+        {% endif %}
+      {% else %}
+        <a href="{% url 'razorpay_payment' material.id %}" class="btn btn-primary">Buy Now</a>
+      {% endif %}
     </div>
   </div>
+  {% empty %}
+    <p style="text-align: center; font-size: 1.2rem;">No study materials available.</p>
   {% endfor %}
 </div>
+<div style="text-align: center; margin: 20px 0;">
+    <a href="{% url 'my_books' %}" class="buy-btn">My Books</a>
+  </div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    function initiatePayment(materialId) {
+        fetch(`/create-payment/${materialId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert("Payment Error: " + data.error);
+                return;
+            }
+            var options = {
+                "key": data.key,
+                "amount": data.amount,
+                "currency": "INR",
+                "name": "Study Materials",
+                "description": "Purchase Study Material",
+                "order_id": data.order_id,
+                "handler": function (response) {
+                    fetch(`/payment-success/${data.material_id}/`)
+                    .then(res => res.json())
+                    .then(() => {
+                        alert("Payment Successful! You can now download the PDF.");
+                        location.reload();
+                    })
+                    .catch(error => console.error("Error processing payment success:", error));
+                }
+            };
+            var rzp = new Razorpay(options);
+            rzp.open();
+        })
+        .catch(error => {
+            console.error("Payment initiation failed:", error);
+            alert("Payment failed! Please try again.");
+        });
+    }
+</script>
 
 {% endblock %}

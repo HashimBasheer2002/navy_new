@@ -59,29 +59,45 @@ class Course(models.Model):
 
 
 
+from django.db import models
+from django.conf import settings
+
 class MockTest(models.Model):
     SECTION_CHOICES = [
         ('artificer apprentice', 'Artificer Apprentice'),
-        ('navy tradesman', 'Navy Tradesman '),
-        ('navy chargeman', 'Navy Chargeman '),
+        ('navy tradesman', 'Navy Tradesman'),
+        ('navy chargeman', 'Navy Chargeman'),
         ('indian navy entrance test', 'Indian Navy Entrance Test'),
         ('indian navy angniveer mr', 'Indian Navy Agniveer MR'),
         ('indian navy angniveer ssr', 'Indian Navy Agniveer SSR'),
         ('naval dockyard', 'Naval Dockyard'),
     ]
     title = models.CharField(max_length=255)
-    section = models.CharField(max_length=30, choices=SECTION_CHOICES,null=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="mock_tests")
-    duration = models.PositiveIntegerField(help_text="Duration in minutes")
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    section = models.CharField(max_length=30, choices=SECTION_CHOICES, null=True)
+    time_limit = models.IntegerField(help_text="Time limit in minutes", default=30)  # Default to 30 minutes
+    duration = models.IntegerField()
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="mock_tests")
 
     def __str__(self):
-        return self.get_section_display()
+        return f"{self.title} ({self.get_section_display()})"
+
+
+class MockTestResult(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,default=True)
+    veteran = models.ForeignKey("VeteranProfile", on_delete=models.CASCADE)
+    mock_test = models.ForeignKey(MockTest, on_delete=models.CASCADE)
+    score = models.IntegerField()
+    date_taken = models.DateTimeField(auto_now_add=True)
+    improvement_suggestion = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.veteran.user.username} - {self.mock_test.title} - Score: {self.score}"
+
 
 
 class Question(models.Model):
     mock_test = models.ForeignKey(MockTest, on_delete=models.CASCADE, related_name="questions")
-    text = models.CharField(max_length=200, null=True)  # Renamed from "Questions" to "text"
+    text = models.CharField(max_length=200, null=True)
     option1 = models.CharField(max_length=255)
     option2 = models.CharField(max_length=255)
     option3 = models.CharField(max_length=255)
@@ -89,14 +105,35 @@ class Question(models.Model):
     correct_option = models.IntegerField(help_text="1, 2, 3, or 4")
 
     def __str__(self):
-        return self.text  # Now it correctly returns the question text
+        return self.text
+
+    def get_option_display(self, option_number=None):
+        """Returns the text of the selected option number. Defaults to correct option if no number is provided."""
+        options = {
+            1: self.option1,
+            2: self.option2,
+            3: self.option3,
+            4: self.option4,
+        }
+        if option_number is None:
+            option_number = self.correct_option  # Default to correct answer
+        return options.get(option_number, "Invalid Option")
+
 
 
 
 class UserResponse(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE,default=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     test = models.ForeignKey(MockTest, on_delete=models.CASCADE)
     score = models.IntegerField()
+    responses = models.JSONField(default=dict)  # Store selected options as a dictionary
+
+    def get_selected_option(self, question_id):
+        """Retrieve the selected answer for a specific question."""
+        return self.responses.get(str(question_id), "Not Answered")
+
+
 
 
 
@@ -117,12 +154,14 @@ class JobOpportunity(models.Model):
 
     title = models.CharField(max_length=255)
     description = models.TextField()
+    requirements = models.TextField(default=True)  # New field for job requirements
     section = models.CharField(max_length=30, choices=SECTION_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     posted_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.title} - {self.get_section_display()}"
+
 
 class JobApplication(models.Model):
     job = models.ForeignKey(JobOpportunity, on_delete=models.CASCADE)
@@ -168,21 +207,32 @@ class WallMedia(models.Model):
 
 from django.db import models
 
+from django.db import models
+
+from django.db import models
+
 class StudyMaterial(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     image = models.ImageField(upload_to='study_materials/')
-    purchase_link = models.URLField()
+    purchase_link = models.URLField(blank=True, null=True)  # External purchase option
     added_at = models.DateTimeField(auto_now_add=True)
+    is_special = models.BooleanField(default=False)  # Special book flag
+    pdf_file = models.FileField(upload_to='study_materials/pdfs/', blank=True, null=True)  # PDF file
+
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Price field
+    is_purchased = models.BooleanField(default=False)  # Purchase tracking
 
     def __str__(self):
         return self.title
+
 
 class Membership(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=False)
     payment_id = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
 
 class Purchase(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -196,3 +246,40 @@ class UserCourse(models.Model):
 
     def __str__(self):
         return f"{self.user.username} applied for {self.course.title}"
+
+
+class Payment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    study_material = models.ForeignKey(StudyMaterial, on_delete=models.CASCADE)
+    razorpay_order_id = models.CharField(max_length=255, unique=True,default=True)  # Ensure this exists
+    payment_id = models.CharField(max_length=255, blank=True, null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2,default=True)
+    status = models.CharField(max_length=20, choices=[("Pending", "Pending"), ("Completed", "Completed")], default="Pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class PurchasedMaterial(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    material = models.ForeignKey(StudyMaterial, on_delete=models.CASCADE)
+    purchased_at = models.DateTimeField(auto_now_add=True)
+
+
+class Campaign(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+class Participation(models.Model):
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name="participants")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    participated_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('campaign', 'user')  # Prevent duplicate participation
+
+    def __str__(self):
+        return f"{self.user.username} - {self.campaign.title}"

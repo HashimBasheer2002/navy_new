@@ -1,12 +1,101 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Job Applications</h2>
-  <ul>
-    {% for application in applications %}
-      <li>{{ application.applicant.username }} applied for {{ application.job.title }} - {{ application.applied_at }}</li>
-    {% endfor %}
-  </ul>
-<br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br>
+<style>
+
+
+    h2 {
+        text-align: center;
+        color: #2c3e50;
+        font-weight: bold;
+        margin-bottom: 25px;
+    }
+
+    .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead {
+        background: #2c3e50;
+        color: white;
+        text-align: left;
+    }
+
+    th, td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    tbody tr:hover {
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+
+    .resume-link {
+        background: #3498db;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .resume-link:hover {
+        background: #2980b9;
+    }
+
+    .no-applications {
+        text-align: center;
+        font-size: 18px;
+        color: #7d7d7d;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container">
+    <h2>Job Applications</h2>
+
+    {% if applications %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Applicant</th>
+                        <th>Job Title</th>
+                        <th>Applied At</th>
+                        <th>Resume</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for application in applications %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ application.applicant.username }}</td>
+                            <td>{{ application.job.title }}</td>
+                            <td>{{ application.applied_at|date:"M d, Y H:i" }}</td>
+                            <td>
+                                {% if application.resume %}
+                                    <a href="{{ application.resume.url }}" class="resume-link" target="_blank">View Resume</a>
+                                {% else %}
+                                    <span class="text-muted">No resume uploaded</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="no-applications">No job applications found.</p>
+    {% endif %}
+</div>
 {% endblock %}

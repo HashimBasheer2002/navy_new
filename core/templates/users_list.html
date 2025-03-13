@@ -43,197 +43,174 @@
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_css %}
+
 <style>
-    /* General Page Styling */
-    body {
-        font-family: 'Poppins', sans-serif;
-        background-color: #f4f7fe;
-    }
+   /* General Page Styling */
 
+
+
+/* Card Styling */
+.card {
+position:relative;
+left:350px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    background-color: #ffffff;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #4f46e5 0%, #a855f7 100%);
+    color: white;
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Table Wrapper */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    padding: 1rem;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Table Styling */
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.user-table thead {
+    background: linear-gradient(90deg, #4f46e5 0%, #8b5cf6 100%);
+    color: white;
+    text-transform: uppercase;
+}
+
+.user-table th,
+.user-table td {
+    padding: 1.2rem;
+    font-size: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.user-table th {
+    font-weight: 700;
+    text-align: left;
+}
+
+.user-table tbody tr:nth-child(odd) {
+    background-color: #f9f9ff; /* Light striped rows */
+}
+
+.user-table tbody tr:hover {
+    background-color: #f0f5ff;
+    transition: all 0.3s ease;
+}
+
+/* User Info */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #4f46e5;
+    transition: transform 0.3s ease;
+}
+
+.user-info:hover .avatar img {
+    transform: scale(1.1);
+}
+
+.username {
+    font-weight: 600;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.user-info:hover .username {
+    color: #4f46e5;
+}
+
+/* ID Badge */
+.id-badge {
+    background-color: #e0e7ff;
+    color: #4f46e5;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-block;
+}
+
+/* Role Badge */
+.role-label {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    background: linear-gradient(90deg, #4f46e5 0%, #8b5cf6 100%);
+    color: white;
+    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.3);
+    transition: all 0.3s ease;
+}
+
+.role-label:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(79, 70, 229, 0.4);
+}
+
+/* Empty Message */
+.empty-message {
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+    padding: 2rem;
+    font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
     .container {
-        max-width: 1000px;
-        margin: 3rem auto;
-        padding: 20px;
-    }
-
-    /* Card Styling */
-    .card {
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        background-color: #fff;
-        overflow: hidden;
-        transition: all 0.4s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-header {
-        padding: 1.8rem;
-        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-        color: white;
-        text-align: center;
-        font-size: 1.6rem;
-        font-weight: 700;
-        letter-spacing: 0.5px;
+        padding: 15px;
     }
 
     .card-body {
-        padding: 2.5rem;
+        padding: 1.5rem;
     }
 
-    /* Table Styling */
-    .table-wrapper {
-        overflow-x: auto;
-        border-radius: 12px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    }
-
-    .user-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        background: white;
-    }
-
-    .user-table thead {
-        background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
-        color: white;
-    }
-
-    .user-table th {
-        padding: 1.2rem 1.5rem;
-        font-size: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 600;
-        text-align: left;
-    }
-
-    .user-table th:first-child {
-        border-top-left-radius: 12px;
-    }
-
-    .user-table th:last-child {
-        border-top-right-radius: 12px;
-    }
-
+    .user-table th,
     .user-table td {
-        padding: 1.2rem 1.5rem;
-        border-bottom: 1px solid #edf2f7;
-        text-align: left;
-        font-size: 1rem;
-    }
-
-    .user-table tbody tr {
-        transition: all 0.3s ease;
-    }
-
-    .user-table tbody tr:last-child td {
-        border-bottom: none;
-    }
-
-    .user-table tbody tr:last-child td:first-child {
-        border-bottom-left-radius: 12px;
-    }
-
-    .user-table tbody tr:last-child td:last-child {
-        border-bottom-right-radius: 12px;
-    }
-
-    .user-table tbody tr:hover {
-        background-color: #f8f7ff;
-        transform: translateY(-2px);
-    }
-
-    .empty-message {
-        text-align: center;
-        color: #6c757d;
-        font-style: italic;
-        padding: 2.5rem !important;
-        font-size: 1.1rem;
-    }
-
-    /* User Info Styling */
-    .user-info {
-        display: flex;
-        align-items: center;
-        gap: 15px;
+        padding: 1rem;
     }
 
     .avatar img {
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid #8b5cf6;
-        transition: all 0.3s ease;
-        box-shadow: 0 3px 10px rgba(107, 114, 214, 0.3);
+        width: 35px;
+        height: 35px;
     }
+}
 
-    .user-info:hover .avatar img {
-        transform: scale(1.1);
-        border-color: #6366f1;
-    }
-
-    .username {
-        font-weight: 600;
-        color: #4b4b4b;
-        transition: color 0.3s ease;
-    }
-
-    .user-info:hover .username {
-        color: #6366f1;
-    }
-
-    /* ID Badge */
-    .id-badge {
-        background-color: #f0f1fe;
-        color: #6366f1;
-        padding: 5px 10px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-
-    /* Role Badge */
-    .role-label {
-        display: inline-block;
-        padding: 8px 16px;
-        border-radius: 30px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
-        color: white;
-        box-shadow: 0 3px 8px rgba(107, 114, 214, 0.3);
-        transition: all 0.3s ease;
-    }
-
-    .role-label:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 12px rgba(107, 114, 214, 0.4);
-    }
-
-    /* Responsive design */
-    @media (max-width: 768px) {
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        .user-table th,
-        .user-table td {
-            padding: 1rem;
-        }
-
-        .avatar img {
-            width: 35px;
-            height: 35px;
-        }
-    }
 </style>
 {% endblock %}

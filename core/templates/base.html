@@ -211,6 +211,7 @@
           <a href="{% url 'home' %}">Home</a>
           {% if user.role == 'veteran' %}
             <a href="{% url 'veteran_experiences' %}"> Experience</a>
+
             <a href="{% url 'create_course' %}"> Course</a>
             <a href="{% url 'view_profile' %}">Profile</a>
             <<a href="{% url 'veteran_profile' %}"> Add Profile</a>
@@ -219,6 +220,7 @@
             <a href="{% url 'logout' %}">Logout</a>
           {% elif user.is_superuser %}
             <a href="{% url 'post_job' %}">Post Job</a>
+        <a href="{% url 'mock_test_results' %}" >Test Results</a>
             <a href="{% url 'applications' %}">Applications</a>
             <a href="{% url 'add_news' %}">News</a>
             <a href="{% url 'post_wall_entry' %}">Honor</a>
@@ -226,16 +228,14 @@
             <a href="{% url 'user_list' %}">View users</a>
 
 
-
-
             <a href="{% url 'logout' %}">Logout</a>
           {% elif user.role == 'aspirant' %}
             <a href="{% url 'mock_test_list' %}">Tests</a>
             <a href="{% url 'view_course' %}">Courses</a>
             <a href="{% url 'job_list' %}">Jobs</a>
-            <a href="{% url 'logout' %}">Logout</a>
             <a href="{% url 'study_materials' %}">Study Material</a>
             <a href="{% url 'veteran_list'%}">Veterans</a>
+            <a href="{% url 'logout' %}">Logout</a>
           {% else %}
           <a href="{% url 'login' %}">Login</a>
           <a href="{% url 'signup' %}">Signup</a>

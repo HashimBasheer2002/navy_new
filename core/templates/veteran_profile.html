@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ veteran.user.username }}'s Profile</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
+
         h1 {
             color: #333;
             text-align: center;
@@ -56,16 +51,7 @@
             color: #777;
             font-size: 0.9em;
         }
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 15px;
-            background: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            text-align: center;
-        }
+
         a:hover {
             background: #0056b3;
         }
@@ -84,6 +70,7 @@
                 <img src="{{ veteran.profile_photo.url }}" alt="{{ veteran.user.username }}'s Profile Photo" class="profile-photo">
             {% endif %}
         </div>
+
 
         <a href="{% url 'veteran_list' %}">Back to Veterans List</a>
     </div>

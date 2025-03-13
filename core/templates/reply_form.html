@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Reply to {{ message.sender.username }}</h3>
+
+<form method="POST">
+    {% csrf_token %}
+    <textarea name="reply_content" placeholder="Write your reply..." required></textarea><br>
+    <button type="submit">Reply</button>
+</form>
+
+{% endblock %}

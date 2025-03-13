@@ -1,0 +1,17 @@
+<h2>My Orders</h2>
+<table>
+    <tr>
+        <th>Book</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Date</th>
+    </tr>
+    {% for order in orders %}
+    <tr>
+        <td>{{ order.study_material.title }}</td>
+        <td>₹{{ order.amount }}</td>
+        <td>{{ order.status }}</td>
+        <td>{{ order.created_at }}</td>
+    </tr>
+    {% endfor %}
+</table>

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Campaigns{% endblock %}
+{% block content %}
+
+<h2 style="text-align: center; margin-top: 20px;">Upcoming Campaigns</h2>
+
+<div class="campaign-container">
+  {% for campaign in campaigns %}
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title">{{ campaign.title }}</h3>
+      <p class="card-text">{{ campaign.description }}</p>
+      <p><strong>Date:</strong> {{ campaign.date }}</p>
+
+      {% if campaign.id in participated_campaigns %}
+        <button class="btn btn-secondary" disabled>Already Participated</button>
+      {% else %}
+        <a href="{% url 'participate_campaign' campaign.id %}" class="btn btn-primary">Participate</a>
+      {% endif %}
+    </div>
+  </div>
+  {% empty %}
+    <p>No campaigns available.</p>
+  {% endfor %}
+</div>
+
+{% endblock %}

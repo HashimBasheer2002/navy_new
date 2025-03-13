@@ -1,0 +1,248 @@
+
+<div class="dashboard-container">
+    <h2 class="dashboard-title">Mock Test Results</h2>
+    <div class="table-container">
+        <table class="results-table">
+            <div class="back-button-container">
+        <a href="{% url 'home' %}" class="back-btn">⬅ Back to Home</a>
+    </div>
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Test</th>
+                    <th>Score</th>
+                    <th>Date Taken</th>
+                    <th>Improvement Suggestion</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td>{{ result.user.username }}</td>
+                    <td>{{ result.mock_test }}</td>
+                    <td class="score-cell">{{ result.score }}</td>
+                    <td>{{ result.date_taken }}</td>
+                    <td>{{ result.improvement_suggestion|default:"No suggestion yet" }}</td>
+                    <td>
+                        <form method="POST" action="{% url 'suggest_improvement' result.id %}" class="suggestion-form">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="text" name="improvement" placeholder="Enter suggestion" class="input-field">
+                                <button type="submit" class="submit-btn">
+                                    <span class="btn-text">Submit</span>
+                                </button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* Base Styles and Variables */
+    :root {
+        --primary-color: #4361ee;
+        --primary-hover: #3a56d4;
+        --secondary-color: #f8f9fa;
+        --text-color: #333;
+        --accent-color: #e63946;
+        --light-gray: #f1f3f5;
+        --border-color: #dee2e6;
+        --shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+        --radius: 12px;
+        --transition: all 0.25s ease;
+    }
+
+    /* Container Styles */
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+    }
+
+    .dashboard-title {
+        color: var(--text-color);
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        position: relative;
+        padding-bottom: 0.75rem;
+    }
+
+    .dashboard-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 4px;
+        background-color: var(--primary-color);
+        border-radius: 2px;
+    }
+
+    .table-container {
+        background-color: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+.back-button-container {
+        margin-bottom: 15px;
+    }
+    .back-btn {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    .back-btn:hover {
+        background-color: #0056b3;
+    }
+    /* Table Styling */
+    .results-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 0;
+        overflow: hidden;
+    }
+
+    .results-table thead {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    }
+
+    .results-table th {
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        padding: 1.25rem 1rem;
+        text-align: left;
+        font-size: 0.85rem;
+        position: relative;
+    }
+
+    .results-table tbody tr {
+        transition: var(--transition);
+    }
+
+    .results-table tbody tr:nth-child(even) {
+        background-color: var(--secondary-color);
+    }
+
+    .results-table tbody tr:hover {
+        background-color: var(--light-gray);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .results-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        font-size: 0.95rem;
+        vertical-align: middle;
+    }
+
+    .score-cell {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    /* Form Styling */
+    .suggestion-form {
+        margin: 0;
+    }
+
+    .input-group {
+        display: flex;
+        align-items: center;
+        max-width: 100%;
+    }
+
+    .input-field {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius) 0 0 var(--radius);
+        font-size: 0.9rem;
+        outline: none;
+        transition: var(--transition);
+    }
+
+    .input-field:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+    }
+
+    .submit-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 0 var(--radius) var(--radius) 0;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .submit-btn:hover {
+        background-color: var(--primary-hover);
+    }
+
+    .btn-text {
+        display: inline-block;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .results-table {
+            font-size: 0.9rem;
+        }
+
+        .results-table th, .results-table td {
+            padding: 0.85rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .results-table {
+            min-width: 750px;
+        }
+
+        .input-field {
+            width: 120px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .dashboard-title {
+            font-size: 1.5rem;
+        }
+
+        .input-field {
+            width: 100px;
+        }
+
+        .submit-btn {
+            padding: 0.75rem 1rem;
+        }
+    }
+</style>

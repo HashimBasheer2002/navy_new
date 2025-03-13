@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Razorpay Payment</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <h1>Complete Your Payment</h1>
+    <button id="rzp-button1">Pay Now</button>
+
+<script>
+    var materialId = "{{ material_id }}";  // Ensure material_id is passed from Django
+
+    var options = {
+        "key": "{{ key }}",
+        "amount": "{{ amount }}",
+        "currency": "INR",
+        "order_id": "{{ order_id }}",
+        "name": "Your Website",
+        "description": "Purchase Study Material",
+        "handler": function (response) {
+            alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+
+            // ✅ Corrected URL with materialId replacement
+            var paymentSuccessUrl = "{% url 'payment_success' material_id=0 %}".replace("0", materialId);
+
+            // ✅ Ensure materialId exists before making the request
+            if (!materialId) {
+                alert("Error: Invalid material ID.");
+                return;
+            }
+
+            // Send a request to Django to record the purchase
+            fetch(paymentSuccessUrl, {
+                method: "GET",
+                credentials: "include"  // Ensure user session is sent
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.message) {
+                    alert("Purchase recorded successfully!");
+                    window.location.href = "{% url 'study_materials' %}";  // Redirect after payment
+                } else {
+                    alert("Error: " + (data.error || "Unknown error occurred."));
+                }
+            })
+            .catch(error => {
+                console.error("Error processing payment:", error);
+                alert("An error occurred! Please contact support.");
+            });
+        },
+        "prefill": {
+            "name": "Test User",
+            "email": "test@example.com"
+        },
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+
+    var rzp1 = new Razorpay(options);
+    document.getElementById('rzp-button1').onclick = function (e) {
+        rzp1.open();
+        e.preventDefault();
+    };
+</script>
+
+
+</body>
+</html>

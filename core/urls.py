@@ -2,7 +2,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('/home', views.home, name='home'),
+    path('', views.index, name='index'),
+    path('/about', views.about, name='about'),
+
     path('study-materials/', views.study_materials, name='study_materials'),
     path('add-study-material/', views.add_study_material, name='add_study_material'),
     path('course/<int:course_id>/applicants/', views.course_applicants, name="course_applicants"),
@@ -35,7 +38,7 @@ urlpatterns = [
     path('jobs/', views.job_list, name='job_list'),
     path('jobs/post/', views.post_job, name='post_job'),
     path('jobs/<int:job_id>/apply/', views.apply_job, name='apply_job'),
-    path('deletetest/',views.delete_test,name='delete_test'),
+    path('deletetest/<int:test_id>/', views.delete_test, name='delete_test'),
     path('add-news/', views.add_news, name='add_news'),
     path('news/', views.view_news, name='news_list'),
     path('applications/', views.applications, name='applications'),
@@ -46,7 +49,26 @@ urlpatterns = [
     path('wall-of-honor/', views.wall_of_honor, name='wall_of_honor'),
     path('wall-of-honor/post/', views.post_wall_entry, name='post_wall_entry'),
     path('wall-of-honor/<int:entry_id>/add-media/', views.add_wall_media, name='add_wall_media'),
+    path('create-payment/<int:material_id>/', views.create_payment, name='create_payment'),
+    path('payment-success/<int:material_id>/', views.payment_success, name='payment_success'),
+    path('razorpay-payment/<int:material_id>/', views.razorpay_payment, name='razorpay_payment'),
+    path('mock-test-results/', views.mock_test_results, name='mock_test_results'),
+    path('suggest-improvement/<int:result_id>/', views.suggest_improvement, name='suggest_improvement'),
+    path('my-books/', views.my_books, name='my_books'),
+    path("campaigns/", views.view_campaigns, name="view_campaigns"),
+    path("campaigns/<int:campaign_id>/participate/", views.participate_campaign, name="participate_campaign"),
+
+    # Admin URLs
+    path("add/campaigns/", views.add_campaign, name="admin_campaigns"),
+    path("campaigns/edit/<int:campaign_id>/", views.edit_campaign, name="edit_campaign"),
+    path("campaigns/delete/<int:campaign_id>/", views.delete_campaign, name="delete_campaign"),
+    path("campaigns/<int:campaign_id>/participants/", views.view_participants, name="view_participants"),
+
+
 ]
+
+
+
 
 
 

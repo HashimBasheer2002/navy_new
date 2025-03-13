@@ -1,6 +1,364 @@
-{% extends 'base.html' %}
-{% block content %}
-<h2>Test Results: {{ test.title }}</h2>
-<p><strong>Your Score:</strong> {{ result.score }}</p>
-<a href="{% url 'mock_test_list' %}">Back to Tests</a>
-{% endblock %}
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results</title>
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+            --secondary-color: #f8fafc;
+            --text-color: #334155;
+            --accent-color: #64748b;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f1f5f9;
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 30px 15px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 35px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: var(--primary-gradient);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 800;
+            font-size: 2.2rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .score-container {
+            text-align: center;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 35px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .score-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .score-container h2 {
+            font-weight: 700;
+            color: var(--success-color);
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        .score-badge {
+            display: inline-block;
+            margin-top: 10px;
+            background: var(--success-color);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 30px;
+            border: none;
+            overflow: hidden;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .results-table th {
+            background: var(--primary-gradient);
+            color: white;
+            text-align: left;
+            padding: 18px 22px;
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .results-table th:first-child {
+            border-top-left-radius: var(--border-radius);
+        }
+
+        .results-table th:last-child {
+            border-top-right-radius: var(--border-radius);
+        }
+
+        .results-table tr:last-child td:first-child {
+            border-bottom-left-radius: var(--border-radius);
+        }
+
+        .results-table tr:last-child td:last-child {
+            border-bottom-right-radius: var(--border-radius);
+        }
+
+        .results-table tr {
+            transition: all 0.2s ease;
+        }
+
+        .results-table tr:hover {
+            background-color: #f8fafc;
+            transform: scale(1.01);
+        }
+
+        .results-table tr:nth-child(even) {
+            background-color: var(--secondary-color);
+        }
+
+        .results-table td {
+            padding: 18px 22px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: top;
+            transition: all 0.2s ease;
+        }
+
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .question-text {
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .your-answer {
+            color: var(--accent-color);
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .your-answer::before {
+            content: "•";
+            position: absolute;
+            left: 10px;
+            color: var(--accent-color);
+            font-size: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .correct-answer {
+            color: var(--success-color);
+            font-weight: 500;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .correct-answer::before {
+            content: "✓";
+            position: absolute;
+            left: 10px;
+            color: var(--success-color);
+            font-weight: bold;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .match {
+            background-color: rgba(16, 185, 129, 0.1) !important;
+        }
+
+        .match .your-answer {
+            color: var(--success-color);
+            font-weight: 500;
+        }
+
+        .match .your-answer::before {
+            content: "✓";
+            color: var(--success-color);
+        }
+
+        .incorrect .your-answer {
+            color: var(--error-color);
+            position: relative;
+        }
+
+        .incorrect .your-answer::before {
+            content: "✗";
+            color: var(--error-color);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--accent-color);
+            font-size: 14px;
+        }
+
+        .feedback-btn {
+            display: inline-block;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .feedback-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px 15px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .score-container {
+                padding: 20px 15px;
+            }
+
+            .score-container h2 {
+                font-size: 1.5rem;
+            }
+
+            .results-table th {
+                padding: 15px;
+                font-size: 13px;
+            }
+
+            .results-table td {
+                padding: 15px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px 10px;
+            }
+
+            .container {
+                padding: 20px 10px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .results-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .results-table th,
+            .results-table td {
+                white-space: normal;
+                min-width: 120px;
+            }
+
+            .your-answer::before,
+            .correct-answer::before {
+                left: 5px;
+            }
+
+            .your-answer,
+            .correct-answer {
+                padding-left: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quiz Results</h1>
+        <div class="score-container">
+            <h2>Your Score: {{ score }} / {{ total_questions }}</h2>
+            <div class="score-badge">
+                {% widthratio score total_questions 100 %}% Correct
+            </div>
+        </div>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Your Answer</th>
+                    <th>Correct Answer</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for question in questions %}
+                <tr {% if selected_answers|get_item:question.id == question.get_option_display %}class="match"{% else %}class="incorrect"{% endif %}>
+                    <td class="question-text">{{ question.text }}</td>
+                    <td class="your-answer">
+                        {{ selected_answers|get_item:question.id }}
+                    </td>
+                    <td class="correct-answer">
+                        {{ question.get_option_display }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="footer">
+            <a href="{% url 'mock_test_list' %}">
+            <button class="feedback-btn">Try Again</button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
