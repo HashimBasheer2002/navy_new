@@ -226,6 +226,8 @@
             <a href="{% url 'post_wall_entry' %}">Honor</a>
             <a href="{% url 'add_study_material' %}">Add Materials</a>
             <a href="{% url 'user_list' %}">View users</a>
+            <a href="{% url 'upload_question_bank' %}">Add QuestionBank</a>
+
 
 
             <a href="{% url 'logout' %}">Logout</a>
@@ -235,7 +237,10 @@
             <a href="{% url 'job_list' %}">Jobs</a>
             <a href="{% url 'study_materials' %}">Study Material</a>
             <a href="{% url 'veteran_list'%}">Veterans</a>
+            <a href="{% url 'user_suggestions'%}">Suggestions</a>
+          <a href="{% url 'question_bank_list'%}">QuestionBank</a>
             <a href="{% url 'logout' %}">Logout</a>
+
           {% else %}
           <a href="{% url 'login' %}">Login</a>
           <a href="{% url 'signup' %}">Signup</a>

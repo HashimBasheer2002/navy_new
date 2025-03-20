@@ -1,39 +1,70 @@
+{% extends 'base.html' %}
 
-<div class="dashboard-container">
-    <h2 class="dashboard-title">Mock Test Results</h2>
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="results-container">
+    <div class="results-header">
+        <h2><i class="fas fa-clipboard-check"></i> Mock Test Results</h2>
+        <a href="{% url 'home' %}" class="back-button"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </div>
+
     <div class="table-container">
         <table class="results-table">
-            <div class="back-button-container">
-        <a href="{% url 'home' %}" class="back-btn">⬅ Back to Home</a>
-    </div>
             <thead>
                 <tr>
-                    <th>User</th>
-                    <th>Test</th>
-                    <th>Score</th>
-                    <th>Date Taken</th>
-                    <th>Improvement Suggestion</th>
-                    <th>Action</th>
+                    <th><i class="fas fa-user"></i> Username</th>
+                    <th><i class="fas fa-file-alt"></i> Test Name</th>
+                    <th><i class="fas fa-star"></i> Score</th>
+                    <th><i class="fas fa-lightbulb"></i> Improvement Suggestion</th>
+                    <th><i class="fas fa-comment-dots"></i> Action</th>
                 </tr>
             </thead>
             <tbody>
                 {% for result in results %}
                 <tr>
-                    <td>{{ result.user.username }}</td>
-                    <td>{{ result.mock_test }}</td>
-                    <td class="score-cell">{{ result.score }}</td>
-                    <td>{{ result.date_taken }}</td>
-                    <td>{{ result.improvement_suggestion|default:"No suggestion yet" }}</td>
                     <td>
-                        <form method="POST" action="{% url 'suggest_improvement' result.id %}" class="suggestion-form">
+                        <div class="user-info">
+                            <div class="avatar">{{ result.user.username|slice:":1" }}</div>
+                            <span>{{ result.user.username }}</span>
+                        </div>
+                    </td>
+                    <td>{{ result.test }}</td>
+                    <td class="score-cell">
+                        <div class="score-badge
+                            {% if result.score >= 80 %}score-high
+                            {% elif result.score >= 60 %}score-medium
+                            {% else %}score-low{% endif %}">
+                            {{ result.score }}%
+                        </div>
+                    </td>
+                    <td class="suggestion-cell">
+                        {% if result.improvement_suggestion %}
+                            <div class="suggestion-content">{{ result.improvement_suggestion }}</div>
+                        {% else %}
+                            <span class="no-suggestion">No suggestions yet</span>
+                        {% endif %}
+                    </td>
+                    <td class="action-cell">
+                        <form method="post" action="{% url 'suggest_improvement' result.id %}" class="suggestion-form">
                             {% csrf_token %}
-                            <div class="input-group">
-                                <input type="text" name="improvement" placeholder="Enter suggestion" class="input-field">
+                            <div class="form-group">
+                                <input type="text" name="improvement" placeholder="Suggest improvement" required>
                                 <button type="submit" class="submit-btn">
-                                    <span class="btn-text">Submit</span>
+                                    <i class="fas fa-paper-plane"></i>
                                 </button>
                             </div>
                         </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr class="empty-row">
+                    <td colspan="5">
+                        <div class="empty-state">
+                            <i class="fas fa-clipboard-list empty-icon"></i>
+                            <p>No test results available.</p>
+                            <a href="{% url 'take_test' %}" class="action-btn">Take a Test</a>
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}
@@ -43,143 +74,223 @@
 </div>
 
 <style>
-    /* Base Styles and Variables */
+    /* Modern Variables */
     :root {
         --primary-color: #4361ee;
-        --primary-hover: #3a56d4;
-        --secondary-color: #f8f9fa;
-        --text-color: #333;
-        --accent-color: #e63946;
-        --light-gray: #f1f3f5;
-        --border-color: #dee2e6;
-        --shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-        --radius: 12px;
-        --transition: all 0.25s ease;
+        --secondary-color: #3f37c9;
+        --success-color: #4cc9f0;
+        --warning-color: #f72585;
+        --danger-color: #f94144;
+        --light-color: #f8f9fa;
+        --dark-color: #212529;
+        --gray-color: #6c757d;
+        --border-radius: 8px;
+        --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+        --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
     }
 
-    /* Container Styles */
-    .dashboard-container {
-        max-width: 1200px;
+    /* Base Styles */
+    body {
+        font-family: var(--font-family);
+        background-color: #f5f7fa;
+        color: var(--dark-color);
+        line-height: 1.6;
+    }
+
+    .results-container {
+        max-width: 1600px;
         margin: 2rem auto;
         padding: 0 1rem;
-        font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
     }
 
-    .dashboard-title {
-        color: var(--text-color);
-        font-size: 2rem;
-        font-weight: 600;
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 1.5rem;
-        text-align: center;
-        position: relative;
-        padding-bottom: 0.75rem;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
 
-    .dashboard-title::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60px;
-        height: 4px;
-        background-color: var(--primary-color);
-        border-radius: 2px;
+    .results-header h2 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--dark-color);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
+    .results-header h2 i {
+        color: var(--primary-color);
+    }
+
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background-color: var(--light-color);
+        color: var(--dark-color);
+        border: none;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        box-shadow: var(--box-shadow);
+    }
+
+    .back-button:hover {
+        background-color: var(--gray-color);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Table Styles */
     .table-container {
         background-color: white;
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        overflow: hidden;
-    }
-.back-button-container {
-        margin-bottom: 15px;
-    }
-    .back-btn {
-        display: inline-block;
-        padding: 8px 16px;
-        background-color: #007bff;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        font-weight: bold;
-    }
-    .back-btn:hover {
-        background-color: #0056b3;
-    }
-    /* Table Styling */
-    .results-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        margin-bottom: 0;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
         overflow: hidden;
     }
 
-    .results-table thead {
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    .results-table th,
+    .results-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
     .results-table th {
-        color: white;
+        background-color: #f8f9fa;
         font-weight: 600;
+        color: var(--gray-color);
         text-transform: uppercase;
-        letter-spacing: 0.03em;
-        padding: 1.25rem 1rem;
-        text-align: left;
         font-size: 0.85rem;
-        position: relative;
+        letter-spacing: 0.5px;
+    }
+
+    .results-table th i {
+        margin-right: 0.5rem;
+        color: var(--primary-color);
     }
 
     .results-table tbody tr {
         transition: var(--transition);
     }
 
-    .results-table tbody tr:nth-child(even) {
-        background-color: var(--secondary-color);
-    }
-
     .results-table tbody tr:hover {
-        background-color: var(--light-gray);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        background-color: rgba(67, 97, 238, 0.05);
     }
 
-    .results-table td {
-        padding: 1rem;
-        border-bottom: 1px solid var(--border-color);
-        font-size: 0.95rem;
-        vertical-align: middle;
+    .results-table tbody tr:last-child td {
+        border-bottom: none;
     }
 
-    .score-cell {
+    /* User Info */
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-weight: 600;
-        color: var(--primary-color);
+        font-size: 1rem;
+        text-transform: uppercase;
     }
 
-    /* Form Styling */
+    /* Score Badge */
+    .score-cell {
+        text-align: center;
+    }
+
+    .score-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        min-width: 60px;
+        text-align: center;
+    }
+
+    .score-high {
+        background-color: rgba(76, 201, 240, 0.15);
+        color: #4cc9f0;
+    }
+
+    .score-medium {
+        background-color: rgba(247, 127, 0, 0.15);
+        color: #f77f00;
+    }
+
+    .score-low {
+        background-color: rgba(247, 37, 133, 0.15);
+        color: #f72585;
+    }
+
+    /* Suggestion Cell */
+    .suggestion-cell {
+        max-width: 250px;
+    }
+
+    .suggestion-content {
+        background-color: rgba(67, 97, 238, 0.1);
+        padding: 0.5rem 0.75rem;
+        border-radius: var(--border-radius);
+        font-size: 0.9rem;
+        position: relative;
+        border-left: 3px solid var(--primary-color);
+    }
+
+    .no-suggestion {
+        color: var(--gray-color);
+        font-style: italic;
+        font-size: 0.9rem;
+    }
+
+    /* Action Cell */
+    .action-cell {
+        width: 220px;
+    }
+
     .suggestion-form {
         margin: 0;
     }
 
-    .input-group {
+    .form-group {
         display: flex;
-        align-items: center;
-        max-width: 100%;
+        gap: 0.5rem;
     }
 
-    .input-field {
+    .form-group input {
         flex: 1;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius) 0 0 var(--radius);
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #e0e0e0;
+        border-radius: var(--border-radius);
         font-size: 0.9rem;
-        outline: none;
         transition: var(--transition);
     }
 
-    .input-field:focus {
+    .form-group input:focus {
+        outline: none;
         border-color: var(--primary-color);
         box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
     }
@@ -188,61 +299,84 @@
         background-color: var(--primary-color);
         color: white;
         border: none;
-        border-radius: 0 var(--radius) var(--radius) 0;
-        padding: 0.75rem 1.25rem;
-        font-size: 0.9rem;
-        font-weight: 500;
+        border-radius: var(--border-radius);
+        padding: 0.5rem;
         cursor: pointer;
         transition: var(--transition);
+        height: 36px;
+        width: 36px;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
     .submit-btn:hover {
-        background-color: var(--primary-hover);
+        background-color: var(--secondary-color);
+        transform: translateY(-2px);
     }
 
-    .btn-text {
-        display: inline-block;
+    /* Empty State */
+    .empty-row td {
+        padding: 3rem 1rem;
+    }
+
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        color: var(--gray-color);
+        opacity: 0.3;
+    }
+
+    .empty-state p {
+        margin: 0;
+        color: var(--gray-color);
+        font-size: 1rem;
+    }
+
+    .action-btn {
+        padding: 0.5rem 1rem;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+    }
+
+    .action-btn:hover {
+        background-color: var(--secondary-color);
+        transform: translateY(-2px);
     }
 
     /* Responsive Design */
     @media (max-width: 992px) {
         .results-table {
-            font-size: 0.9rem;
+            min-width: 900px;
         }
 
-        .results-table th, .results-table td {
-            padding: 0.85rem;
+        .table-container {
+            overflow-x: auto;
         }
     }
 
     @media (max-width: 768px) {
-        .table-container {
-            overflow-x: auto;
+        .results-header {
+            flex-direction: column;
+            align-items: flex-start;
         }
 
-        .results-table {
-            min-width: 750px;
-        }
-
-        .input-field {
-            width: 120px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .dashboard-title {
-            font-size: 1.5rem;
-        }
-
-        .input-field {
-            width: 100px;
-        }
-
-        .submit-btn {
-            padding: 0.75rem 1rem;
+        .empty-row td {
+            padding: 2rem 1rem;
         }
     }
 </style>
+{% endblock %}

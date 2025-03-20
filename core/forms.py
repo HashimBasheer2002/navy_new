@@ -13,6 +13,13 @@ class CustomUserForm(forms.ModelForm):
             'password': forms.PasswordInput(),
         }
 
+    def __init__(self, *args, **kwargs):
+        super(CustomUserForm, self).__init__(*args, **kwargs)
+        # Filter role choices to exclude 'admin'
+        filtered_choices = [choice for choice in CustomUser.ROLE_CHOICES if choice[0] != 'admin']
+        self.fields['role'].choices = filtered_choices
+
+
 
 class VeteranProfileForm(forms.ModelForm):
     class Meta:
@@ -106,3 +113,10 @@ class StudyMaterialForm(forms.ModelForm):
 
 
 
+from django import forms
+from .models import QuestionBank
+
+class QuestionBankForm(forms.ModelForm):
+    class Meta:
+        model = QuestionBank
+        fields = ['title', 'pdf']

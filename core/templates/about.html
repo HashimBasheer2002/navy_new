@@ -1,4 +1,109 @@
-<body>
-<h1> about NavyConnect</h1>
-<a href="{% url 'index'%}">Back to home</a>
-</body>
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .about-container {
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 30px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        font-family: 'Segoe UI', sans-serif;
+        color: #2c3e50;
+        position: relative;
+    }
+
+    .about-container h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #003366;
+    }
+
+    .features-list {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .features-list li {
+        padding: 12px 0;
+        border-bottom: 1px solid #ccc;
+        font-size: 16px;
+    }
+
+    .features-list li span {
+        font-weight: bold;
+        color: #003366;
+    }
+
+    .abstract-section {
+        margin-top: 30px;
+        background: #e6f0fa;
+        padding: 20px;
+        border-left: 5px solid #003366;
+        border-radius: 8px;
+    }
+
+    .abstract-section h2 {
+        color: #003366;
+        margin-bottom: 15px;
+    }
+
+    .abstract-section p {
+        line-height: 1.8;
+        text-align: justify;
+    }
+
+    .highlight {
+        color: #003366;
+        font-weight: bold;
+    }
+
+    .back-button {
+        display: inline-block;
+        margin-top: 25px;
+        padding: 12px 25px;
+        background-color: #003366;
+        color: #fff;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .back-button:hover {
+        background-color: #001f4d;
+    }
+</style>
+
+<div class="about-container">
+    <h1>About Navy Veteran Connect</h1>
+
+    <ul class="features-list">
+        <li><span>1. Real-time OTP Confirmation:</span> Instant OTP verification for payments through phone number and email ID.</li>
+        <li><span>2. Online Secure Payment:</span> Secure online payment system for membership fees, donations, or other services.</li>
+        <li><span>3. Aspirants Management:</span> Manage user accounts including cancellations, modifications, and refunds.</li>
+        <li><span>4. Payment Gateway:</span> Multiple payment options including credit/debit cards, net banking, and wallets.</li>
+        <li><span>5. User Account Management:</span> Create and manage user profiles, including payment history.</li>
+        <li><span>6. Indian Navy Management:</span> Manage inventory, membership fees, and other services through a dedicated dashboard.</li>
+        <li><span>7. Indian Navy Information:</span> Comprehensive information about pensions, education, and events in India.</li>
+        <li><span>8. Retired Officer Management:</span> Manage resources such as online courses, study materials, mock tests, and job requirements for aspirants.</li>
+    </ul>
+
+    <div class="abstract-section">
+        <h2>Our Mission</h2>
+        <p>
+            <span class="highlight">Navy Veteran Connect</span> is a unique platform dedicated to retired Indian Navy officers and future aspirants. We provide a space to reconnect, share experiences, and guide new entrants into the Indian Navy. Our goal is to foster a strong sense of community, support, and patriotism through features like a member directory, discussion forums, and an event calendar.
+        </p>
+
+        <p>
+            Retired officers can maintain camaraderie while assisting aspirants with personalized guidance, online training, study materials, and mock tests. Secure online payment options, real-time OTP verification, and a transparent donation system ensure safety and integrity.
+        </p>
+
+        <p>
+            To honor the sacrifices and achievements of our Navy veterans, we feature a <span class="highlight">Wall of Honor</span> alongside galleries of memorable moments. Together, we aim to empower and support those who served and those aspiring to serve.
+        </p>
+    </div>
+
+    <a href="{% url 'index' %}" class="back-button">⬅ Back to Home</a>
+</div>
+{% endblock %}

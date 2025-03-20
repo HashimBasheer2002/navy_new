@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<style>
+
+
+
+
+    .card {
+        position:relative;
+        left:350px;;
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .card-header {
+        background-color: #dc3545;
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .card-header h2 {
+        margin: 0;
+        font-size: 24px;
+    }
+
+    .card-body {
+        padding: 30px;
+        text-align: center;
+    }
+
+    .card-body p {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 30px;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+        margin: 10px;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+</style>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>⚠️ Confirm Delete</h2>
+        </div>
+        <div class="card-body">
+            <p>Are you sure you want to delete the user <strong>{{ user.username }}</strong>?</p>
+            <form method="post">
+                {% csrf_token %}
+                <a href="{% url 'user_list' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -276,18 +276,7 @@
     {% endif %}
 
 </div>
-<div class="recent-suggestions">
-    <h3>📢 Recent Suggestions from Admin</h3>
-    {% if recent_suggestions %}
-        <ul>
-            {% for result in recent_suggestions %}
-                <li><strong>{{ result.mock_test }}</strong>: {{ result.improvement_suggestion }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p class="no-suggestions">No recent suggestions.</p>
-    {% endif %}
-</div>
+
 
 
 {% endblock %}

@@ -122,19 +122,28 @@ class Question(models.Model):
 
 
 
+from django.db import models
+
 class UserResponse(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE,default=True)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, default=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     test = models.ForeignKey(MockTest, on_delete=models.CASCADE)
     score = models.IntegerField()
     responses = models.JSONField(default=dict)  # Store selected options as a dictionary
+    improvement_suggestion = models.TextField(blank=True, null=True)  # ➡️ Add this line!
 
     def get_selected_option(self, question_id):
         """Retrieve the selected answer for a specific question."""
         return self.responses.get(str(question_id), "Not Answered")
 
 
+class QuestionBank(models.Model):
+    title = models.CharField(max_length=255)
+    pdf = models.FileField(upload_to='question_banks/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.title
 
 
 class JobOpportunity(models.Model):

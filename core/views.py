@@ -516,12 +516,15 @@ def test_result(request, test_id):
 
 
 
+# views.py
+
 @login_required
 def mock_test_results(request):
-    if not request.user.is_staff:  # Ensure only admin users can access
+    if not request.user.is_staff:
         return HttpResponseForbidden("You are not authorized to view this page.")
 
-    results = MockTestResult.objects.all().order_by('-date_taken')
+    # Use UserResponse model
+    results = UserResponse.objects.all().order_by('-id')  # Latest first
 
     return render(request, 'view_test_results.html', {'results': results})
 
@@ -540,20 +543,37 @@ from django.contrib.auth.decorators import login_required
 from .models import MockTestResult
 
 
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
+from .models import UserResponse  # Correct model
+
+from django.contrib import messages  # Import this at the top
+
 @login_required
 def suggest_improvement(request, result_id):
     if not request.user.is_staff:
         return HttpResponseForbidden("You are not authorized to do this.")
 
-    result = get_object_or_404(MockTestResult, id=result_id)
+    result = get_object_or_404(UserResponse, id=result_id)
 
     if request.method == "POST":
         suggestion = request.POST.get("improvement")
+        print(f"Received Suggestion: {suggestion}")  # Debug print
         result.improvement_suggestion = suggestion
         result.save()
+        print("Saved improvement suggestion successfully!")
+        messages.success(request, "Improvement suggestion submitted successfully.")
 
-    # Redirect to a page where the aspirant can see only their own suggestions
-    return redirect(reverse('user_suggestions'))
+    return redirect(reverse('mock_test_results'))  # Redirect back to results page
+
+
+
+@login_required
+def user_suggestions(request):
+    user_responses = UserResponse.objects.filter(user=request.user).order_by('-id')
+    return render(request, 'user_suggestions.html', {'results': user_responses})
 
 
 def is_admin(user):
@@ -1046,3 +1066,60 @@ def view_participants(request, campaign_id):
     campaign = get_object_or_404(Campaign, id=campaign_id)
     participants = Participation.objects.filter(campaign=campaign)
     return render(request, "view_participants.html", {"campaign": campaign, "participants": participants})
+
+
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+
+User = get_user_model()
+
+# Check if the user is an admin
+def is_admin(user):
+    return user.is_staff
+
+@login_required
+@user_passes_test(is_admin)
+def view_profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    return render(request, 'view_profile.html', {'user': user})
+
+@login_required
+@user_passes_test(is_admin)
+def delete_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, f'User {user.username} has been deleted.')
+        return redirect('user_list')
+    return render(request, 'confirm_delete.html', {'user': user})
+
+from .models import QuestionBank
+from .forms import QuestionBankForm
+from django.db.models import Q
+
+@login_required
+def upload_question_bank(request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden("Only admin can upload materials")
+
+    if request.method == 'POST':
+        form = QuestionBankForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('question_bank_list')
+    else:
+        form = QuestionBankForm()
+    return render(request, 'upload_question_bank.html', {'form': form})
+
+
+# Aspirant List & Search View
+def question_bank_list(request):
+    query = request.GET.get('q')
+    if query:
+        materials = QuestionBank.objects.filter(Q(title__icontains=query))
+    else:
+        materials = QuestionBank.objects.all().order_by('-uploaded_at')
+    return render(request, 'question_bank_list.html', {'materials': materials})

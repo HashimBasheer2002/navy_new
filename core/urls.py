@@ -64,6 +64,12 @@ urlpatterns = [
     path("campaigns/delete/<int:campaign_id>/", views.delete_campaign, name="delete_campaign"),
     path("campaigns/<int:campaign_id>/participants/", views.view_participants, name="view_participants"),
 
+    path('users/<int:user_id>/profile/', views.view_profile, name='view_profile'),
+    path('users/<int:user_id>/delete/', views.delete_user, name='delete_user'),
+    path('suggest-improvement/<int:result_id>/', views.suggest_improvement, name='suggest_improvement'),
+    path('my-suggestions/', views.user_suggestions, name='user_suggestions'),
+    path('upload-question-bank/', views.upload_question_bank, name='upload_question_bank'),
+    path('question-bank/', views.question_bank_list, name='question_bank_list'),
 
 ]
 

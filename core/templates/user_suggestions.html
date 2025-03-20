@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="suggestions-container">
+    <h2>My Test Suggestions</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Test Name</th>
+                <th>Score</th>
+                <th>Improvement Suggestion</th>
+                <th>Date Taken</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <td>{{ result.test.title }}</td>
+                <td>{{ result.score }}</td>
+                <td>
+    {% if result.improvement_suggestion %}
+        {{ result.improvement_suggestion }}
+    {% else %}
+        -
+    {% endif %}
+</td>
+                <td>{{ result.timestamp }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No test results available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<style>
+    .suggestions-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+td {
+    color: #555;
+}
+
+td:nth-child(3) {
+    font-style: italic;
+    color: #777;
+}
+
+@media (max-width: 600px) {
+    th, td {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+}
+</style>
+{% endblock %}
